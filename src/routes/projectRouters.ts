@@ -1,7 +1,5 @@
-import express, { Router } from 'express';
-import { registerUser } from '../controllers/authControllers';
-const authRouter :Router = express.Router();
+import express, { Router } from "express";
 
-authRouter.post('/register',registerUser);
+const projectRouter: Router = express.Router();
 
-export default authRouter;
+export default projectRouter;
