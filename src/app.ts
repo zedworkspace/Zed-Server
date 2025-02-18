@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import authRouter from "./routes/authRouters";
+import globalErrorHandler from "./middlewares/globalErrorHandler";
 
 const app = express();
 
@@ -11,5 +12,9 @@ app.use(cors({
   }));
 
 app.use('/api',authRouter)
+
+
+
+app.use(globalErrorHandler);
 
 export default app;
