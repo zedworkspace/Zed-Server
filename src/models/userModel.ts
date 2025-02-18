@@ -1,14 +1,15 @@
 import mongoose, { Schema } from "mongoose";
+import { IUser } from "../interfaces/userInterface";
 
 const userSchema : Schema = new Schema ({
-    username:{type:String, required:true, unique:true},
+    name:{type:String, required:true, unique:true},
     email:{type:String, required:true, unique:true},
-    passwordHash:{type:String, required:true},
-    avatarUrl:{type:String},
-    bannerUrl:{type:String},
+    password:{type:String, required:true},
+    profileImg:{type:String},
+    bannerImg:{type:String},
     gitId:{type:String},
     googleId:{type:String}
 });
 
-const User = mongoose.model ('user',userSchema);
+const User = mongoose.model <IUser> ('user',userSchema);
 export default User;
