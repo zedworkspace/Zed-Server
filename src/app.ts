@@ -3,6 +3,7 @@ import cors from "cors";
 import authRouter from "./routes/authRouters";
 import projectRouter from "./routes/projectRouters";
 import globalErrorHandler from "./middlewares/globalErrorHandler";
+import profileRouter from "./routes/profileRoutes";
 
 const app = express();
 
@@ -16,6 +17,7 @@ app.use(
 
 app.use("/api", authRouter);
 app.use("/api/v1/projects", projectRouter);
+app.use('/api/v1',profileRouter)
 
 app.use(globalErrorHandler);
 export default app;
