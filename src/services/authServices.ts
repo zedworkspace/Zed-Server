@@ -31,6 +31,7 @@ export const emailSignIn = async (userData : IUser) : Promise<object> => {
     const verifyPassword = await bycrpt.compare(password,user.password);
     if(!verifyPassword) throw new CustomError('Invalid email or password !',404);
     return {
+            _id:user._id,
             name:user.name,
             email:user.email,
             profileImg:user.profileImg
