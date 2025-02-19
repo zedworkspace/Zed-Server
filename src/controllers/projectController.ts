@@ -1,4 +1,4 @@
-import { create } from "../services/projectService";
+import { create, getAll } from "../services/projectService";
 import { asyncErrorHandler } from "../utils/asyncErrorHandler";
 
 export const createProject = asyncErrorHandler(async (req, res) => {
@@ -9,5 +9,14 @@ export const createProject = asyncErrorHandler(async (req, res) => {
     status: "success",
     message: "Successfully created project",
     data: project,
+  });
+});
+
+export const getProjects = asyncErrorHandler(async(req, res) => {
+  const projects = await getAll();
+  res.status(200).json({
+    status: "success",
+    message: "Successfully getall project",
+    data: projects,
   });
 });
