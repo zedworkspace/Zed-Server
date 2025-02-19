@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import authRouter from "./routes/authRouters";
 import projectRouter from "./routes/projectRoutes";
+import globalErrorHandler from "./middlewares/globalErrorHandler";
 
 const app = express();
 
@@ -12,6 +13,6 @@ app.use(cors({
   }));
 
 app.use('/api',authRouter)
-app.use('/api/projects',projectRouter)
-
+app.use("/api/projects",projectRouter)
+app.use(globalErrorHandler)
 export default app;

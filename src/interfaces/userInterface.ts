@@ -1,9 +1,9 @@
 export interface IUser {
-    username:string;
+    name:string;
     email:string;
-    passwordHash:string;
-    avatarUrl:string;
-    bannerUrl:string;
+    password:string;
+    profileImg:string;
+    bannerImg:string;
     gitId:string;
     googleId:string;
     createdAt:string;
