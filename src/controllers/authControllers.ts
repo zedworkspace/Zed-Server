@@ -7,10 +7,16 @@ export const sendOtp = catchAsync(async(req:Request,res:Response) => {
     res.json(otp);
 })
 export const emailRegister = catchAsync(async(req:Request,res:Response) => {
-    const register = await authServices.emailRegister(req.body);
+    const register = await authServices.emailRegister(res,req.body);
+    console.log(register)
     res.json(register);
 })
 export const emailSignIn = catchAsync(async(req:Request,res:Response) => {
-    const signin = await authServices.emailSignIn(req.body);
+    const signin = await authServices.emailSignIn(res,req.body);
     res.json(signin);
+})
+export const accessTokenGenerator = catchAsync(async(req:Request,res:Response) => {
+    const refreshToken = req.cookies.refreshToken;
+    const accessToken = await authServices.accessTokenGenerator(refreshToken);
+    res.json(accessToken);
 })
