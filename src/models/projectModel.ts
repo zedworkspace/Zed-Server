@@ -1,26 +1,11 @@
 import mongoose from "mongoose";
 
 const projectSchema = new mongoose.Schema({
-  projectName: {
-    type: String,
-    required: true,
-  },
-  ProjectDescription: {
-    type: String,
-  },
-  projectLogo: {
-    type: String,
-    required: true,
-  },
-  projectMembers: {
-    type: Array,
-  },
-  projectOwner: {
-    type: String,
-  },
-  projectRepo: {
-    type: Array,
-  },
+  name: { type: String, required: true },
+  description: { type: String },
+  logo: { type: String, required: true },
+  owner: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+  repo: { type: Array },
 });
 
 const Project = mongoose.model("projects", projectSchema);
