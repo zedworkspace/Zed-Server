@@ -14,3 +14,8 @@ export const create = async (
   });
   return project;
 };
+
+export const getAll =async ()=>{
+  const projects = await Project.find();
+  return projects
+}
