@@ -8,7 +8,6 @@ export const sendOtp = catchAsync(async(req:Request,res:Response) => {
 })
 export const emailRegister = catchAsync(async(req:Request,res:Response) => {
     const register = await authServices.emailRegister(res,req.body);
-    console.log(register)
     res.json(register);
 })
 export const emailSignIn = catchAsync(async(req:Request,res:Response) => {
@@ -19,4 +18,12 @@ export const accessTokenGenerator = catchAsync(async(req:Request,res:Response) =
     const refreshToken = req.cookies.refreshToken;
     const accessToken = await authServices.accessTokenGenerator(refreshToken);
     res.json(accessToken);
+})
+export const sendResetOtp = catchAsync(async(req:Request,res:Response) => {
+    const otp = await authServices.sentResetOtp(req.body);
+    res.json(otp);
+})
+export const resetPassword = catchAsync(async(req:Request,res:Response) => {
+    const register = await authServices.resetPassword(req.body);
+    res.json({message:"Rest Password Sucessfull, Login Now"});
 })
