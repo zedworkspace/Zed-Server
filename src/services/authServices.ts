@@ -14,7 +14,6 @@ export const sentOtp = async (userData : IUser) : Promise<object> => {
     sendOtpEmail(email,otp);
     return {email,otp};
 }
-
 export const emailRegister = async (res : Response, userData : IUser) : Promise<object> => {
     const {name,email,password} = userData;
     if (!password) throw new CustomError("Password is required", 400);
@@ -56,3 +55,19 @@ export const accessTokenGenerator = async (refToken:string) : Promise <object> =
     const newAccessToken = generateAccessToken(payload.userId);
     return {accessToken:newAccessToken}
 }
+export const sentResetOtp = async (userData : IUser) : Promise<object> => {
+    const {email} = userData;
+    const existEmail = await User.findOne({email});
+    if(!existEmail) throw new CustomError('User not found !',404);
+    const otp = generateOtp();
+    sendOtpEmail(email,otp);
+    return {email,otp};
+}
+export const resetPassword = async (userData : IUser) : Promise<object> => {
+    const {email,password} = userData; 
+    const user = await User.findOne({email});
+    if(!user) throw new CustomError('User not found !',404);
+    const hashedPassword = await bycrpt.hash(password,10);
+    user.password = hashedPassword;
+    return user.save();
+};
