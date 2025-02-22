@@ -67,6 +67,7 @@ export const resetPassword = async (userData : IUser) : Promise<object> => {
     const {email,password} = userData; 
     const user = await User.findOne({email});
     if(!user) throw new CustomError('User not found !',404);
+    if (!password) throw new CustomError("Password is required", 400);
     const hashedPassword = await bycrpt.hash(password,10);
     user.password = hashedPassword;
     return user.save();
