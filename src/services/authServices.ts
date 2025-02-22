@@ -15,7 +15,8 @@ export const sentOtp = async (userData : IUser) : Promise<object> => {
     return {email,otp};
 }
 export const emailRegister = async (res : Response, userData : IUser) : Promise<object> => {
-    const {name,email,password} = userData; 
+    const {name,email,password} = userData;
+    if (!password) throw new CustomError("Password is required", 400);
     const hashedPassword = await bycrpt.hash(password,10);
     const user = await User.create({name,email,password:hashedPassword});
     if(!user) throw new CustomError('User not created !',400);
@@ -34,6 +35,7 @@ export const emailSignIn = async (res : Response, userData : IUser) : Promise<ob
     const {email,password} = userData; 
     const user = await User.findOne({email});
     if(!user) throw new CustomError('Invalid email or password !',404);
+    if (!password || !user.password) throw new CustomError("Invalid credentials", 400);
     const verifyPassword = await bycrpt.compare(password,user.password);
     if(!verifyPassword) throw new CustomError('Invalid email or password !',404);
     const accessToken = generateAccessToken(user._id);
@@ -65,6 +67,7 @@ export const resetPassword = async (userData : IUser) : Promise<object> => {
     const {email,password} = userData; 
     const user = await User.findOne({email});
     if(!user) throw new CustomError('User not found !',404);
+    if (!password) throw new CustomError("Password is required", 400);
     const hashedPassword = await bycrpt.hash(password,10);
     user.password = hashedPassword;
     return user.save();
