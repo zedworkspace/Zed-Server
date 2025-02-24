@@ -32,7 +32,7 @@ export const getProjects = catchAsync(async (req, res) => {
   
   res.status(200).json({
     status: "success",
-    message: "Successfully getall project",
+    message: "Successfully fetched projects",
     data: projects,
   });
 });
