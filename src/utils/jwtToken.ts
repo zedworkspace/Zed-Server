@@ -39,7 +39,7 @@ export const verifyRefreshToken = (token: string) : Itoken => {
     }
 };
 
-export const sentRefreshToken  = (res:Response,token:string) : void => {
+export const sendRefreshToken  = (res:Response,token:string) : void => {
     res.cookie('refreshToken',token,{
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production', 
