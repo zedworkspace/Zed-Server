@@ -5,6 +5,9 @@ import { userAuth } from "../middlewares/userAuth";
 
 const projectRouter: Router = express.Router();
 
-projectRouter.route("/").post(userAuth,upload.single("logo"), createProject);
+projectRouter
+  .route("/")
+  .post(userAuth, upload.single("logo"), createProject)
+  .get(userAuth, getProjects);
 
 export default projectRouter;

@@ -3,8 +3,12 @@ import { IProject } from "../interfaces/projectInterface";
 import Project from "../models/projectModel";
 import CustomError from "../utils/CustomError";
 
-export const createProject = async (newProjectData: {name:string; description: string; logo: string; owner: mongoose.Types.ObjectId;}): Promise<IProject> => {
-  
+export const createProject = async (newProjectData: {
+  name: string;
+  description: string;
+  logo: string;
+  owner: mongoose.Types.ObjectId;
+}): Promise<IProject> => {
   const project = await Project.create({
     name: newProjectData.name,
     logo: newProjectData.logo,
@@ -14,7 +18,8 @@ export const createProject = async (newProjectData: {name:string; description: s
   return project;
 };
 
-export const getProjects =async ()=>{
-  const projects = await Project.find();
-  return projects
-}
+export const getProjects = async (userId: mongoose.Types.ObjectId) => {
+  const projects = await Project.find({ owner: { _id: userId } });
+  console.log("Projects", projects);
+  return projects;
+};

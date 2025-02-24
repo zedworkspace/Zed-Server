@@ -1,5 +1,5 @@
 import { asyncErrorHandler } from "../utils/asyncErrorHandler";
-import * as projectService from '../services/projectService';
+import * as projectService from "../services/projectService";
 import CustomError from "../utils/CustomError";
 import { IUser } from "../interfaces/userInterface";
 import { IProject } from "../interfaces/projectInterface";
@@ -26,10 +26,10 @@ export const createProject = catchAsync(async (req, res) => {
   });
 });
 
-
-
-export const getProjects = asyncErrorHandler(async(req, res) => {
-  const projects = await projectService.getProjects();
+export const getProjects = catchAsync(async (req, res) => {
+  const user = req.user as IUser;
+  const projects = await projectService.getProjects(user._id);
+  
   res.status(200).json({
     status: "success",
     message: "Successfully getall project",
