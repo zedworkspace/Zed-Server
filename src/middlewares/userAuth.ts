@@ -20,9 +20,7 @@ export const userAuth = async (req: AuthenticatedRequest, res: Response, next: N
     try {
         const decoded = jwt.verify(token, JWT_SECRET_KEY) as JwtPayload;
         const user = await User.findById(decoded.userId);
-
         if (!user) return next(new CustomError("Access Forbidden", 403));
-
         req.user = user as IUser;
         next();
     } catch (error) {
