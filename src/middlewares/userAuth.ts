@@ -14,6 +14,7 @@ export const userAuth = (req: Request, res: Response, next: NextFunction) => {
     try {
         const verified = jwt.verify(token, JWT_SECRET_KEY) as JwtPayload;
         (req as any).user = verified ;
+        console.log(verified)
         next();
     } catch (error) {
         res.status(401).json({ message: "Invalid token" });
