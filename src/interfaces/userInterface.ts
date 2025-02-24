@@ -7,7 +7,7 @@ export interface IUser extends Document{
     password?:string;
     profileImg?:string;
     bannerImg?:string;
-    gitId?:string;
+    gitHubId?:string;
     googleId?:string;
     createdAt:string;
 }
