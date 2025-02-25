@@ -10,11 +10,14 @@ const channelSchema: Schema<IChannel> = new mongoose.Schema({
   name: { type: String, required: true },
   type: { type: String, required: true }, //voice or text
   description: { type: String },
-  allowedRoles: ['everyOne',{ type: mongoose.Schema.Types.ObjectId, ref: "Role" }],
+  allowedRoles: [
+    "everyOne",
+    { type: mongoose.Schema.Types.ObjectId, ref: "Role" },
+  ],
+  isDefault: { type: Boolean, default: false },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
-  
 });
 
-const Channel = mongoose.model<IChannel>('Channel',channelSchema)
-export default Channel
+const Channel = mongoose.model<IChannel>("Channel", channelSchema);
+export default Channel;
