@@ -24,7 +24,6 @@ export const getProjects = async (userId: mongoose.Types.ObjectId) => {
 };
 
 export const getProject = async (projectId: string) => {
-  console.log("d",projectId)
   const project = await Project.findOne({ _id: projectId });
   return project;
 };
