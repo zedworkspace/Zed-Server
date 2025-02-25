@@ -29,10 +29,21 @@ export const createProject = catchAsync(async (req, res) => {
 export const getProjects = catchAsync(async (req, res) => {
   const user = req.user as IUser;
   const projects = await projectService.getProjects(user._id);
-  
+
   res.status(200).json({
     status: "success",
     message: "Successfully fetched projects",
     data: projects,
+  });
+});
+
+export const getProject = catchAsync(async (req, res) => {
+  const { id } = req.params;
+  const project = await projectService.getProject(id);
+  console.log(project);
+  res.status(200).json({
+    status: "success",
+    message: "Successfully fetched project",
+    data: project,
   });
 });

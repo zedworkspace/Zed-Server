@@ -20,6 +20,11 @@ export const createProject = async (newProjectData: {
 
 export const getProjects = async (userId: mongoose.Types.ObjectId) => {
   const projects = await Project.find({ owner: { _id: userId } });
-  console.log("Projects", projects);
   return projects;
+};
+
+export const getProject = async (projectId: string) => {
+  console.log("d",projectId)
+  const project = await Project.findOne({ _id: projectId });
+  return project;
 };

@@ -1,5 +1,9 @@
 import express, { Router } from "express";
-import { createProject, getProjects } from "../controllers/projectController";
+import {
+  createProject,
+  getProject,
+  getProjects,
+} from "../controllers/projectController";
 import upload from "../middlewares/imageUploadingMiddleware";
 import { userAuth } from "../middlewares/userAuth";
 
@@ -10,5 +14,6 @@ projectRouter
   .post(userAuth, upload.single("logo"), createProject)
   .get(userAuth, getProjects);
 
+projectRouter.route("/:id").get(userAuth, getProject);
 
 export default projectRouter;
