@@ -7,7 +7,6 @@ const projectSchema : Schema<IProject> = new mongoose.Schema({
   logo: { type: String, required: true },
   owner: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   repo: { type: Array },
-
 });
 
 const Project = mongoose.model<IProject>("projects", projectSchema);

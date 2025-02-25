@@ -3,6 +3,7 @@ import { IProject } from "../interfaces/projectInterface";
 import Project from "../models/projectModel";
 import CustomError from "../utils/CustomError";
 import Channel from "../models/channelModel";
+import { IChannel } from "../interfaces/channelInterface";
 
 export const createProject = async (newProjectData: {name:string; description: string; logo: string; owner: mongoose.Types.ObjectId;}): Promise<{ project: IProject; channel: any }> => {
   
@@ -16,12 +17,15 @@ export const createProject = async (newProjectData: {name:string; description: s
     name : 'Gneral Text',
     projectId:project._id,
     type : 'text',
+    channelMembers:[newProjectData.owner]
   },
   {
     name : 'Gneral Voice',
     projectId:project._id,
     type : 'voice',
+    channelMembers:[newProjectData.owner]
   })
+
   return {project,channel}
 };
 

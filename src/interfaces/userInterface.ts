@@ -10,4 +10,5 @@ export interface IUser extends Document{
     gitHubId?:string;
     googleId?:string;
     createdAt:string;
+    servers: mongoose.Types.ObjectId[]
 }
