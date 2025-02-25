@@ -6,5 +6,5 @@ const RoleSchema = new mongoose.Schema({
     projectId: { type: mongoose.Schema.Types.ObjectId, ref: "Project", required: true },
 });
 
-const Role = mongoose.model("roles", RoleSchema);
+const Role = mongoose.model("Role", RoleSchema);
 export default Role;
