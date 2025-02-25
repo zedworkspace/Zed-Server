@@ -1,12 +1,14 @@
-import mongoose from "mongoose";
+import mongoose, { Schema } from "mongoose";
+import { IProject } from "../interfaces/projectInterface";
 
-const projectSchema = new mongoose.Schema({
+const projectSchema : Schema<IProject> = new mongoose.Schema({
   name: { type: String, required: true },
   description: { type: String,  default: "" },
   logo: { type: String, required: true },
   owner: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   repo: { type: Array },
+
 });
 
-const Project = mongoose.model("projects", projectSchema);
+const Project = mongoose.model<IProject>("projects", projectSchema);
 export default Project;
