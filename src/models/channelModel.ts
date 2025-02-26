@@ -1,0 +1,23 @@
+import mongoose, { Schema } from "mongoose";
+import { IChannel } from "../interfaces/channelInterface";
+
+const channelSchema: Schema<IChannel> = new mongoose.Schema({
+  projectId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Project",
+    required: true,
+  },
+  name: { type: String, required: true },
+  type: { type: String, required: true }, //voice or text
+  description: { type: String },
+  allowedRoles: [
+    "everyOne",
+    { type: mongoose.Schema.Types.ObjectId, ref: "Role" },
+  ],
+  isDefault: { type: Boolean, default: false },
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now },
+});
+
+const Channel = mongoose.model<IChannel>("Channel", channelSchema);
+export default Channel;
