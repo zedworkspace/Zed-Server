@@ -4,6 +4,8 @@ import Member from "../models/memberModel";
 import Project from "../models/projectModel";
 import CustomError from "../utils/CustomError";
 import { v4 as uuidv4 } from "uuid";
+import nodemailer from 'nodemailer';
+import { config } from '../configs/config';
 
 export const generateInviteLink = async (projectId: string, userId: mongoose.Types.ObjectId) => {
 
@@ -40,3 +42,29 @@ export const generateInviteLink = async (projectId: string, userId: mongoose.Typ
 
     return `http://localhost:3000/invite/${inviteLink}`;
 };
+
+
+export const sendInviteEmail = async (email: string, inviteLink: string) => {
+    const transporter = nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+            user: config.EMAIL, 
+            pass: config.APP_PASSWORD,
+        },
+    });
+    
+    const mailOptions = {
+        from: process.env.EMAIL_USER,
+        to: email,
+        subject: "You're invited to join a project on Zed!",
+        html: `<p>Hello,</p>
+               <p>You have been invited to join a project on Zed.</p>
+               <p>Click the link below to join:</p>
+               <a href="${inviteLink}">${inviteLink}</a>
+               <p>This link expires in 7 days.</p>`,
+    };
+
+    await transporter.sendMail(mailOptions);
+
+    return inviteLink;
+}
