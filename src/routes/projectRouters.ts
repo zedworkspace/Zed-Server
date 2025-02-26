@@ -14,8 +14,6 @@ const projectRouter: Router = express.Router();
 projectRouter.route("/").post(userAuth, upload.single("logo"), createProject);
 projectRouter.get("/generate-invite/:projectId", userAuth, generateInviteLink);
 
-export default projectRouter;
-
 projectRouter
   .route("/")
   .post(userAuth, upload.single("logo"), createProject)
