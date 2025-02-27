@@ -31,6 +31,9 @@ export const updateUserProfile = async (userData : Profile,userId : string, prof
     if(profileImg) {
         user.profileImg = profileImg.path
     }
+    if(bio){
+        user.bio = bio
+    }
     await user.save()
 
     return user

@@ -1,7 +1,7 @@
 import mongoose, { Schema } from "mongoose";
 import { IMessage } from "../interfaces/messageInterface";
 
-const messageSchema : Schema<IMessage> = new mongoose.Schema({
+const messageSchema : Schema <IMessage> = new mongoose.Schema({
   channelId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Channel",
@@ -12,9 +12,10 @@ const messageSchema : Schema<IMessage> = new mongoose.Schema({
     ref: "User",
     required: true,
   },
-  message: { type: String, required: true },
+  content: { type: String, required: true },
+  type: { type: String, enum: ["text", "image", "video"], default: "text" },
   createdAt: { type: Date, default: Date.now },
 });
 
-const Message = mongoose.model<IMessage>("Message", messageSchema);
+const Message = mongoose.model <IMessage> ("Message", messageSchema);
 export default Message;

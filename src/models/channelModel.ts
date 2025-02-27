@@ -7,6 +7,11 @@ const channelSchema: Schema<IChannel> = new mongoose.Schema({
     ref: "Project",
     required: true,
   },
+  
+  channelMembers :[{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "ChannelMembers"
+  }],
   name: { type: String, required: true },
   type: { type: String, required: true }, //voice or text
   description: { type: String },
