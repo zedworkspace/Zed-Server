@@ -6,6 +6,7 @@ import Channel from "../models/channelModel";
 import { IChannel } from "../interfaces/channelInterface";
 import Member from "../models/memberModel";
 
+
 export const createProject = async (newProjectData: {
   name: string;
   description: string;
@@ -25,7 +26,6 @@ export const createProject = async (newProjectData: {
       projectId: project._id,
       type: "text",
       isDefault: true,
-      // channelMembers:[newProjectData.owner]
     },
     {
       name: "General Voice",

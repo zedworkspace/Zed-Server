@@ -28,11 +28,12 @@
     "next": "^15.1.7",
     "nodemailer": "^6.10.0",
     "otp-generator": "^4.0.1",
-    "socket.io": "^4.8.1",
     "passport": "^0.7.0",
     "passport-github2": "^0.1.12",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "socket.io": "^4.8.1",
+    "uuid": "^11.1.0"
   },
   "devDependencies": {
     "@types/axios": "^0.14.4",
