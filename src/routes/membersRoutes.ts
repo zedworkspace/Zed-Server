@@ -1,8 +1,9 @@
 import express, { Router } from 'express'
-import { getMembersByProject } from '../controllers/membersControllers'
+import { getMembersByProject, joinProject } from '../controllers/membersControllers'
 
 const memberRouter:Router = express.Router()
 
+memberRouter.post('/project/members/join',joinProject)
 memberRouter.get('/project/members/:projectId',getMembersByProject)
 
 

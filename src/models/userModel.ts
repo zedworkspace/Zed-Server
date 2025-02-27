@@ -7,6 +7,7 @@ const userSchema: Schema<IUser> = new Schema({
     email:{type:String, required:true, unique:true},
     password:{type:String},
     profileImg:{type:String},
+    bio:{type:String},
     bannerImg:{type:String},
     gitHubId:{type:String},
     googleId:{type:String},

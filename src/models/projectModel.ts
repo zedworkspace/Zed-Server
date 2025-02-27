@@ -9,5 +9,5 @@ const projectSchema : Schema<IProject> = new mongoose.Schema({
   repo: { type: Array },
 });
 
-const Project = mongoose.model<IProject>("projects", projectSchema);
+const Project = mongoose.model<IProject>("Project", projectSchema);
 export default Project;
