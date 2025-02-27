@@ -1,7 +1,7 @@
 import { IUser } from "../interfaces/userInterface";
 
 declare module "express" {
-    interface Request {
+    export interface Request {
         user?: IUser;
     }
 }
