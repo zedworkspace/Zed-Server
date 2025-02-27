@@ -7,10 +7,12 @@ const userSchema: Schema<IUser> = new Schema({
     email:{type:String, required:true, unique:true},
     password:{type:String},
     profileImg:{type:String},
+    bio:{type:String},
     bannerImg:{type:String},
     gitHubId:{type:String},
-    googleId:{type:String}
+    googleId:{type:String},
+    servers: [{ type: mongoose.Schema.Types.ObjectId, ref: "Server" }],
 });
 
-const User = mongoose.model <IUser> ('user',userSchema);
+const User = mongoose.model <IUser> ('User',userSchema);
 export default User;
