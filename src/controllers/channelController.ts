@@ -17,7 +17,7 @@ export const getChannelByProjectId = catchAsync (async(req:Request, res:Response
     const {projectId} = req.params 
     const channel = await channelServices.getChannelByProjectId(projectId)
     res.status(201).json({
-        status: 'succes',
+        status: 'success',
         message: "get channels by specific project",
         data: channel
     })
