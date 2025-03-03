@@ -38,7 +38,6 @@ export const createProject = async (newProjectData: {
   const newMember = new Member({ userId:newProjectData.owner, projectId:project._id });
   await newMember.save();
 
-  console.log("newMember", newMember);
   return { project, channel };
 
 };
@@ -55,7 +54,6 @@ export const getProject = async (projectId: string) => {
 
 export const getProjects = async (userId: mongoose.Types.ObjectId) =>{
   const projects = await Member.find({userId}).populate('projectId', '_id name logo description owner repo')
-  console.log(projects,'alksjfkjaslkdjf');
   return projects
 
 }

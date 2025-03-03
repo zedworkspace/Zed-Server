@@ -37,7 +37,6 @@ export const getProjects = catchAsync(async (req, res) => {
 export const getProject = catchAsync(async (req, res) => {
   const { id } = req.params;
   const project = await projectService.getProject(id);
-  console.log(project);
   res.status(200).json({
     status: "success",
     message: "Successfully fetched project",

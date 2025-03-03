@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { IMessage } from "../interfaces/messageInterface";
 import Channel from "../models/channelModel";
 import Member from "../models/memberModel";
@@ -27,6 +28,26 @@ export const sendMessage = async ({channelId, senderId, content, type} : {channe
 
   return await message.save();
 };
+
+export const sendFile = async (messageData :{
+  file:string,
+  channelId:string,
+  senderId:mongoose.Types.ObjectId,
+})=>{
+
+  const channel = await Channel.findById(messageData.channelId);
+  if (!channel) {
+    throw new CustomError("Channel not found",404) 
+  }
+
+  const isMember = await Member.findOne({ userId: messageData.senderId, projectId: channel.projectId });
+  if (!isMember) {
+    throw new CustomError("User is not member of this project",404)
+  }
+
+  return messageData.file
+}
+
 
 // Get messages from a channel
 export const getMessagesByChannel = async (channelId:string) => {

@@ -12,7 +12,8 @@ const messageSchema : Schema <IMessage> = new mongoose.Schema({
     ref: "User",
     required: true,
   },
-  content: { type: String, required: true },
+  content: { type: String, required: false },
+  fileUrl: { type: String, required: false },
   type: { type: String, enum: ["text", "image", "video"], default: "text" },
   createdAt: { type: Date, default: Date.now },
 });

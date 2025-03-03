@@ -15,39 +15,32 @@ export const initializeSocket = (server:any) => {
   io.on("connection", (socket) => {
     console.log("A user connected:", socket.id);
 
-    // Join Room
     socket.on("joinRoom", (channelId) => {
       socket.join(channelId);
       console.log(`User joined room: ${channelId}`);
     });
 
-    // Handle New Message
     socket.on("sendMessage", async (data) => {
       try {
-          const { channelId, senderId, content, type } = data;
+          const { channelId, fileUrl, senderId, content, type } = data;  
 
-          console.log(data,'dataaaaaaaaaaaaaaaaaaaaaaaaaaa');
-  
-          // ✅ Fetch the sender's profile image
+          console.log(data,'dataaaaaaaaaaaaaaaaaaaaaaa');
           const sender = await User.findById(senderId).select("_id name profileImg");
 
-          console.log(sender,'senderrrrrrrrrrrr');
   
           if (!sender) return;
   
-          // ✅ Create a new message
           const newMessage = new Message({
               senderId: sender._id,
               content,
+              fileUrl,
               type,
               channelId,
           });
 
-          console.log(newMessage,'new message....');
-  
+          
           await newMessage.save();
   
-          // ✅ Emit the message with sender details
           io.to(channelId).emit("receiveMessage", {
               _id: newMessage._id,
               senderId: {
@@ -56,6 +49,7 @@ export const initializeSocket = (server:any) => {
                   profileImg: sender.profileImg ,
               },
               content,
+              fileUrl,
               type,
               channelId,
           });
