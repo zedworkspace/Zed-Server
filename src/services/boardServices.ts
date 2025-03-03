@@ -1,4 +1,5 @@
 import Board from "../models/boardModel";
+import CustomError from "../utils/CustomError";
 
 export const getProjectBoards = async ({
   projectId,
@@ -7,4 +8,18 @@ export const getProjectBoards = async ({
 }) => {
   const boards = await Board.find({ projectId });
   return boards;
+};
+
+export const getBoardById = async ({
+  projectId,
+  boardId,
+}: {
+  projectId: string;
+  boardId: string;
+}) => {
+  const board = await Board.findOne({ projectId, _id: boardId });
+
+  if (!board)
+    throw new CustomError(`Can't find board with this id ${boardId}`, 400);
+  return board;
 };
