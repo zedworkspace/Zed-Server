@@ -13,3 +13,14 @@ export const createListByBoardId = catchAsync(async (req, res) => {
     data: list,
   });
 });
+
+export const getListsByBoardId = catchAsync(async (req, res) => {
+  const { boardId } = req.params;
+  console.log("req,params", req.params);
+  const lists = await listServices.getListsByBoardId({ boardId });
+  res.status(200).json({
+    status: "success",
+    message: "Successfully fetched lists",
+    data: lists,
+  });
+});

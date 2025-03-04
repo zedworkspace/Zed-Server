@@ -10,6 +10,7 @@ import messageRouter from "./routes/messageRoutes";
 import memberRouter from "./routes/membersRoutes";
 import boardRouter from "./routes/boardRouters";
 import listRouter from "./routes/listRouter";
+import cardRouter from "./routes/cardRouter";
 
 const app = express();
 
@@ -31,6 +32,7 @@ app.use("/api/v1", messageRouter);
 app.use("/api/v1", memberRouter);
 app.use("/api/v1/boards", boardRouter);
 app.use("/api/v1/lists", listRouter);
+app.use("/api/v1/cards", cardRouter);
 
 app.use(globalErrorHandler);
 export default app;

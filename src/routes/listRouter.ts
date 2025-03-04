@@ -1,8 +1,11 @@
 import express from "express";
-import { createListByBoardId } from "../controllers/listControllers";
+import {
+  createListByBoardId,
+  getListsByBoardId,
+} from "../controllers/listControllers";
 
 const listRouter = express.Router();
 
-listRouter.route("/:boardId").post(createListByBoardId);
+listRouter.route("/:boardId").post(createListByBoardId).get(getListsByBoardId);
 
 export default listRouter;
