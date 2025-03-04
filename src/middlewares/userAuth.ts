@@ -5,11 +5,7 @@ import { config } from "../configs/config";
 import User from "../models/userModel";
 import { IUser } from "../interfaces/userInterface";
 
-interface AuthenticatedRequest extends Request {
-    user?: IUser;
-}
-
-export const userAuth = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+export const userAuth = async (req: Request, res: Response, next: NextFunction) => {
     const token = req.headers["authorization"]?.split(" ")[1];
 
     if (!token) return next(new CustomError("Access denied, token missing!", 401));

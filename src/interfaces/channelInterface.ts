@@ -7,6 +7,7 @@ export interface IChannel {
   type: string;
   description: string;
   allowedRoles: mongoose.Types.ObjectId;
+  channelMembers: mongoose.Types.ObjectId[]
   isDefault: boolean;
   createdAt: Date;
   updatedAt: Date;

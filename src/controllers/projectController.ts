@@ -2,9 +2,6 @@ import { asyncErrorHandler } from "../utils/asyncErrorHandler";
 import * as projectService from "../services/projectService";
 import CustomError from "../utils/CustomError";
 import { IUser } from "../interfaces/userInterface";
-import { IProject } from "../interfaces/projectInterface";
-import { ObjectId } from "mongodb";
-import mongoose from "mongoose"; // Import Mongoose
 import catchAsync from "../utils/catchAsync";
 
 export const createProject = catchAsync(async (req, res) => {
@@ -40,7 +37,7 @@ export const getProjects = catchAsync(async (req, res) => {
 export const getProject = catchAsync(async (req, res) => {
   const { id } = req.params;
   const project = await projectService.getProject(id);
-  console.log(project);
+  
   res.status(200).json({
     status: "success",
     message: "Successfully fetched project",
