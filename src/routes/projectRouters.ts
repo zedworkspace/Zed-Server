@@ -12,10 +12,6 @@ const projectRouter: Router = express.Router();
 
 
 projectRouter.route("/").post(userAuth, upload.single("logo"), createProject);
-projectRouter.get("/generate-invite/:projectId", userAuth, generateInviteLink);
-projectRouter.post("/send-invite", userAuth, sendInviteEmail);
-projectRouter.post("/accept-invite", userAuth, acceptInvite);
-projectRouter.get("/invite", userAuth, getInviteInfo);
 
 projectRouter
   .route("/")
