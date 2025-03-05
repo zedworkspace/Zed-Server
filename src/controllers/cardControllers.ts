@@ -12,3 +12,13 @@ export const createCardByListId = catchAsync(async (req, res) => {
     data: card,
   });
 });
+
+export const getCardById = catchAsync(async (req, res) => {
+  const { cardId } = req.params;
+  const card = await cardServices.getCardById({ cardId });
+  res.status(200).json({
+    status: "success",
+    message: "Successfully fetched card",
+    data: card,
+  });
+});
