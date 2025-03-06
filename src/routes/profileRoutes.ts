@@ -5,8 +5,8 @@ import { userAuth } from '../middlewares/userAuth'
 
 const profileRouter : Router= express.Router()
 
-profileRouter.get('/profile/:userId',userAuth,getProfile)
-profileRouter.put('/profile/update/:userId',upload.single('profileImg'),userAuth,updateProfile)
+profileRouter.get('/profile',userAuth,getProfile)
+profileRouter.put('/profile/update',upload.single('profileImg'),userAuth,updateProfile)
 
 
 export default profileRouter
