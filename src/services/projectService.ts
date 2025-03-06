@@ -20,7 +20,7 @@ export const createProject = async (newProjectData: {
     description: newProjectData.description,
     owner: newProjectData.owner,
   });
-  
+
   const channel = await Channel.create(
     {
       name: "General Text",
@@ -51,7 +51,6 @@ export const createProject = async (newProjectData: {
 
   return { project, channel, board };
 };
-
 
 export const getProject = async (projectId: string) => {
   const project = await Project.findOne({ _id: projectId });

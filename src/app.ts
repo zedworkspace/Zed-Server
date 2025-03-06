@@ -9,6 +9,9 @@ import channelRouter from "./routes/channelRoutes";
 import messageRouter from "./routes/messageRoutes";
 import memberRouter from "./routes/membersRoutes";
 import boardRouter from "./routes/boardRouters";
+import listRouter from "./routes/listRouter";
+import cardRouter from "./routes/cardRouter";
+import inviteRouter from "./routes/inviteRoutes";
 
 const app = express();
 
@@ -24,11 +27,14 @@ app.use(
 
 app.use("/api", authRouter);
 app.use("/api/v1/projects", projectRouter);
+app.use("/api/v1/invite", inviteRouter);
 app.use("/api/v1", profileRouter);
 app.use("/api/v1", channelRouter);
 app.use("/api/v1", messageRouter);
 app.use("/api/v1", memberRouter);
 app.use("/api/v1/boards", boardRouter);
+app.use("/api/v1/lists", listRouter);
+app.use("/api/v1/cards", cardRouter);
 
 app.use(globalErrorHandler);
 export default app;
