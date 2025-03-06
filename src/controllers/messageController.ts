@@ -38,5 +38,20 @@ export const getMessagesByChannel = catchAsync(async (req : Request, res : Respo
     const messages = await messageService.getMessagesByChannel(channelId);
 
     res.status(200).json({ messages });
-
 }) 
+
+
+export const unReadMessages = catchAsync (async (req: Request, res:Response) =>{
+  const user = req.user as IUser
+  const messages = await messageService.unReadMessages(user._id)
+  res.status(200).json(messages)
+})
+
+
+export const readMessage = catchAsync (async (req: Request, res: Response) => {
+  const user = req.user as IUser
+  const { channelId } = req.params
+  
+  const readMessage = await messageService.readMessage(user._id, channelId)
+  res.status(201).json({readMessage})
+})

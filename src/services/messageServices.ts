@@ -53,3 +53,23 @@ export const sendFile = async (messageData :{
 export const getMessagesByChannel = async (channelId:string) => {
   return await Message.find({ channelId }).populate('senderId', '_id name profileImg' );
 };
+
+
+export const unReadMessages = async (userId:mongoose.Types.ObjectId) => {
+  const messages = await Message.aggregate([
+    {$match: {readBy:{$ne:userId}}},
+    {$group: { _id:"$channelId", count: {$sum:1}}}
+  ])
+
+  return messages
+}
+
+
+export const readMessage = async (userId:mongoose.Types.ObjectId, channelId:string) => {
+
+  const message = await Message.updateMany(
+    { channelId, readBy: { $ne: userId } }, 
+      { $addToSet: { readBy: userId } } 
+  )
+  return message
+}

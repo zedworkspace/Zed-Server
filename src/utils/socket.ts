@@ -4,7 +4,7 @@ import User from "../models/userModel";
 
 let io: Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>;
 
-export const initializeSocket = (server:any) => {
+export const initializeSocket = (server: any) => {
   io = new Server(server, {
     cors: {
       origin: "http://localhost:3000",
@@ -15,51 +15,65 @@ export const initializeSocket = (server:any) => {
   io.on("connection", (socket) => {
     console.log("A user connected:", socket.id);
 
-    socket.on("joinRoom", (channelId) => {
+    socket.on("joinRoom", (channelId, userId) => {
       socket.join(channelId);
-      console.log(`User joined room: ${channelId}`);
+      console.log(`User joined room: ${channelId}, ${userId}`);
     });
 
     socket.on("sendMessage", async (data) => {
       try {
-          const { channelId, fileUrl, senderId, content, type } = data;  
+        const { channelId, fileUrl, senderId, content, type } = data;
 
-          console.log(data,'dataaaaaaaaaaaaaaaaaaaaaaa');
-          const sender = await User.findById(senderId).select("_id name profileImg");
+        const sender = await User.findById(senderId).select("_id name profileImg");
 
-  
-          if (!sender) return;
-  
-          const newMessage = new Message({
-              senderId: sender._id,
-              content,
-              fileUrl,
-              type,
-              channelId,
-          });
+        if (!sender) return;
 
-          
-          await newMessage.save();
-  
-          io.to(channelId).emit("receiveMessage", {
-              _id: newMessage._id,
-              senderId: {
-                  name:sender.name,
-                  _id: sender._id,
-                  profileImg: sender.profileImg ,
-              },
-              content,
-              fileUrl,
-              type,
-              channelId,
-          });
+        const newMessage = new Message({
+          senderId: sender._id,
+          content,
+          fileUrl,
+          type,
+          channelId,
+          readBy: [sender._id],
+        });
+
+        await newMessage.save();
+
+        io.to(channelId).emit("receiveMessage", {
+          _id: newMessage._id,
+          senderId: {
+            name: sender.name,
+            _id: sender._id,
+            profileImg: sender.profileImg,
+          },
+          content,
+          fileUrl,
+          type,
+          channelId,
+          readBy: newMessage.readBy,
+        });
+
+        io.to(channelId).emit("newUnreadMessage", { channelId, count: 1, senderId: sender._id });
       } catch (error) {
-          console.error("Error sending message:", error);
+        console.error("Error sending message:", error);
       }
-  });
-  
+    });
 
-    // Disconnect
+    socket.on("readMessage", async ({ channelId, userId }) => {
+      try {
+        const updatedMessages = await Message.updateMany(
+          { channelId, readBy: { $ne: userId } },
+          { $addToSet: { readBy: userId } }
+        );
+
+        if (updatedMessages.modifiedCount > 0) {
+          io.to(channelId).emit("messagesRead", { channelId, userId });
+        }
+      } catch (error) {
+        console.error("Error marking messages as read:", error);
+      }
+    });
+
     socket.on("disconnect", () => {
       console.log("User disconnected:", socket.id);
     });

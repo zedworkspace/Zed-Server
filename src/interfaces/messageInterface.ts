@@ -7,4 +7,5 @@ export interface IMessage {
     fileUrl:string;
     type:string
     createdAt: Date
+    readBy: mongoose.Types.ObjectId[]
 }
