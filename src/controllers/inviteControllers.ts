@@ -36,8 +36,9 @@ export const acceptInvite =  catchAsync(async (req: Request, res: Response, next
 })
 
 export const getInviteInfo =  catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    const {inviteLink} = req.body;
-    const project = await inviteServices.getInviteInfo( inviteLink );
+    if (!req.user?._id) throw new CustomError("User ID not found", 400);
+    const {inviteLink} = req.params;
+    const project = await inviteServices.getInviteInfo( req.user._id, inviteLink );
     res.status(200).json({
         status: "success",
         message: "Invite Info fetch successfully",
