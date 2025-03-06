@@ -16,6 +16,7 @@ export const createProject = catchAsync(async (req, res) => {
   };
 
   const project = await projectService.createProject(newProjectData);
+  console.log(project,'projject');
   res.status(200).json({
     status: "success",
     message: "Successfully created project",

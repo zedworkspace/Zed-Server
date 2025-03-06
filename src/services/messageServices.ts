@@ -66,7 +66,7 @@ export const unReadMessages = async (userId:mongoose.Types.ObjectId) => {
 
 
 export const readMessage = async (userId:mongoose.Types.ObjectId, channelId:string) => {
-
+  console.log(userId,'userId');
   const message = await Message.updateMany(
     { channelId, readBy: { $ne: userId } }, 
       { $addToSet: { readBy: userId } } 

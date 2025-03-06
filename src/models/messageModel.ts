@@ -14,7 +14,8 @@ const messageSchema : Schema <IMessage> = new mongoose.Schema({
   },
   readBy:[{
     type:mongoose.Schema.Types.ObjectId,
-    ref:'User'
+    ref:'User',
+    required:false
   }],
   content: { type: String, required: false },
   fileUrl: { type: String, required: false },
