@@ -62,6 +62,5 @@ export const getProjects = async (userId: mongoose.Types.ObjectId) => {
     "projectId",
     "_id name logo description owner repo"
   );
-
   return projects;
 };
