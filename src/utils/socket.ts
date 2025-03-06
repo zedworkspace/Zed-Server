@@ -1,6 +1,9 @@
 import { DefaultEventsMap, Server } from "socket.io";
 import Message from "../models/messageModel";
 import User from "../models/userModel";
+import List from "../models/listModel";
+import Card from "../models/cardModel";
+import { getListsByBoardId } from "../services/listServices";
 
 let io: Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>;
 
@@ -24,7 +27,9 @@ export const initializeSocket = (server: any) => {
       try {
         const { channelId, fileUrl, senderId, content, type } = data;
 
-        const sender = await User.findById(senderId).select("_id name profileImg");
+        const sender = await User.findById(senderId).select(
+          "_id name profileImg"
+        );
 
         if (!sender) return;
 
@@ -53,7 +58,11 @@ export const initializeSocket = (server: any) => {
           readBy: newMessage.readBy,
         });
 
-        io.to(channelId).emit("newUnreadMessage", { channelId, count: 1, senderId: sender._id });
+        io.to(channelId).emit("newUnreadMessage", {
+          channelId,
+          count: 1,
+          senderId: sender._id,
+        });
       } catch (error) {
         console.error("Error sending message:", error);
       }
@@ -72,6 +81,16 @@ export const initializeSocket = (server: any) => {
       } catch (error) {
         console.error("Error marking messages as read:", error);
       }
+    });
+
+    socket.on("onCardDrop", async (fromListId, cardId, toListId, boardId) => {
+      await Card.findOneAndUpdate(
+        { _id: cardId },
+        { $set: { listId: toListId } }
+      );
+      const lists = await getListsByBoardId({ boardId });
+
+      io.emit("onUpdateList", lists);
     });
 
     socket.on("disconnect", () => {
