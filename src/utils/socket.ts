@@ -3,7 +3,11 @@ import Message from "../models/messageModel";
 import User from "../models/userModel";
 import List from "../models/listModel";
 import Card from "../models/cardModel";
-import { getListsByBoardId } from "../services/listServices";
+import {
+  createListByBoardId,
+  getListsByBoardId,
+} from "../services/listServices";
+import { createCardByListId } from "../services/cardServices";
 
 let io: Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>;
 
@@ -83,14 +87,33 @@ export const initializeSocket = (server: any) => {
       }
     });
 
+    const handleUpdatedBoard = async ({
+      io,
+      boardId,
+    }: {
+      io: Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>;
+      boardId: string;
+    }) => {
+      const lists = await getListsByBoardId({ boardId });
+      io.emit("onUpdateList", lists);
+    };
+
+    socket.on("onCreateCard", async ({ data, listId, boardId }) => {
+      await createCardByListId({ body: data, listId });
+      handleUpdatedBoard({ io, boardId });
+    });
+
+    socket.on("onCreateList", async ({ data, boardId }) => {
+      await createListByBoardId({ body: data, boardId });
+      handleUpdatedBoard({ io, boardId });
+    });
+
     socket.on("onCardDrop", async (fromListId, cardId, toListId, boardId) => {
       await Card.findOneAndUpdate(
         { _id: cardId },
         { $set: { listId: toListId } }
       );
-      const lists = await getListsByBoardId({ boardId });
-
-      io.emit("onUpdateList", lists);
+      handleUpdatedBoard({ io, boardId });
     });
 
     socket.on("disconnect", () => {
