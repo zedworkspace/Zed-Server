@@ -13,14 +13,15 @@ export const generateInviteLink = async (projectId: string, userId: mongoose.Typ
     if (!project) throw new CustomError("Project not found", 404);
 
     if (project.owner.toString() !== userId.toString()) {
-        const member = await Member.findOne({ projectId, userId }).populate({
-            path: "roles",
-            select: "permissions"
-        });
+        throw new CustomError("User does not have permission to invite", 403);
+        // const member = await Member.findOne({ projectId, userId }).populate({
+        //     path: "roles",
+        //     select: "permissions"
+        // });
 
-        if (!member) {
-            throw new CustomError("User does not have permission to invite", 403);
-        }
+        // if (!member) {
+        //     throw new CustomError("User does not have permission to invite", 403);
+        // }
 
         // const permissions = new Set(member.roles.flatMap((role: any) => role.permissions));
         // if (!permissions.has("INVITE_MEMBERS") && !permissions.has("ADMINISTRATION")) {
@@ -101,7 +102,7 @@ export const acceptInvite = async ( userId: mongoose.Types.ObjectId, inviteLink:
 }
 
 
-export const getInviteInfo = async ( inviteLink: string ) => {
+export const getInviteInfo = async (userId: mongoose.Types.ObjectId, inviteLink: string) => {
     const invite = await Invite.findOne({ inviteLink });
 
     if (!invite) {
@@ -118,10 +119,22 @@ export const getInviteInfo = async ( inviteLink: string ) => {
         throw new CustomError("Project not found", 404);
     }
 
+    if (project.owner.toString() === userId.toString()) {
+        return { redirectToProject: true, projectId: project._id };
+    }
+
+    const isMember = await Member.findOne({ projectId: project._id, userId });
+
+    if (isMember) {
+        return { redirectToProject: true, projectId: project._id };
+    }
+
     return {
         name: project.name,
         description: project.description,
+        logo: project.logo,
         owner: project.owner,
         projectId: project._id,
+        redirectToProject: false,
     };
-}
+};
