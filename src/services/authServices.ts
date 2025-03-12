@@ -22,7 +22,8 @@ export const emailRegister = async (res : Response, userData : IUser) : Promise<
     const {name,email,password} = userData;
     if (!password) throw new CustomError("Password is required", 400);
     const hashedPassword = await bycrpt.hash(password,10);
-    const user = await User.create({name,email,password:hashedPassword});
+    const avatarUrl = `https://ui-avatars.com/api/?name=${name.charAt(0)}&random`;
+    const user = await User.create({name,email,profileImg:avatarUrl,password:hashedPassword});
     if(!user) throw new CustomError('User not created !',400);
     const accessToken = generateAccessToken(user._id);
     const refreshToken = generateRefreshToken(user._id);
