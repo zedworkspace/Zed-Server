@@ -7,4 +7,5 @@ export const config = {
     EMAIL : process.env.EMAIL,
     APP_PASSWORD : process.env.APP_PASSWORD,
     JWT_SECRET_KEY : process.env.JWT_SECRET_KEY,
+    FRONTEND_URL: process.env.FRONTEND_URL,
 }
