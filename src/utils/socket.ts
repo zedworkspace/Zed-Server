@@ -116,6 +116,10 @@ export const initializeSocket = (server: any) => {
       handleUpdatedBoard({ io, boardId });
     });
 
+    socket.on("onChangeListPosition", (boardId) => {
+      handleUpdatedBoard({ io, boardId });
+    });
+
     socket.on("disconnect", () => {
       console.log("User disconnected:", socket.id);
     });

@@ -10,6 +10,7 @@ const listSchema = new mongoose.Schema<IList>({
     type: String,
     required: true,
   },
+  position: { type: Number, required: true },
 });
 
 const List = mongoose.model("Lists", listSchema);
