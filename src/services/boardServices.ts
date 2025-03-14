@@ -23,3 +23,11 @@ export const getBoardById = async ({
     throw new CustomError(`Can't find board with this id ${boardId}`, 400);
   return board;
 };
+
+export const createBoard = async ({name,projectId}:{name:string,projectId:string}) => {
+  const board = await Board.create({
+    projectId:projectId,
+    name:name
+  })
+  return board
+}
