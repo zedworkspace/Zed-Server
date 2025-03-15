@@ -7,6 +7,8 @@ import { v4 as uuidv4 } from "uuid";
 import nodemailer from 'nodemailer';
 import { config } from '../configs/config';
 
+
+
 export const generateInviteLink = async (projectId: string, userId: mongoose.Types.ObjectId) => {
 
     const project = await Project.findById(projectId);
@@ -31,7 +33,7 @@ export const generateInviteLink = async (projectId: string, userId: mongoose.Typ
 
     const existingInvite = await Invite.findOne({ projectId, generatedBy: userId, expirationDate: { $gt: new Date() } });
     if (existingInvite) {
-        return `http://localhost:3000/invite/${existingInvite.inviteLink}`;
+        return `${config.FRONTEND_URL}/invite/${existingInvite.inviteLink}`;
     }
 
     const inviteLink = uuidv4();
@@ -41,7 +43,7 @@ export const generateInviteLink = async (projectId: string, userId: mongoose.Typ
     const newInvite = new Invite({ projectId, inviteLink, generatedBy: userId, expirationDate });
     await newInvite.save();
 
-    return `http://localhost:3000/invite/${inviteLink}`;
+    return `${config.FRONTEND_URL}/invite/${inviteLink}`;
 };
 
 

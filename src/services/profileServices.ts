@@ -33,7 +33,7 @@ export const updateUserProfile = async (userData : Profile,userId : mongoose.Typ
     if(profileImg) {
         user.profileImg = profileImg.path
     }
-    if(bio){
+    if(bio !== undefined){
         user.bio = bio
     }
     await user.save()
