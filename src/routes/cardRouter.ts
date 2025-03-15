@@ -5,6 +5,6 @@ const cardRouter = express.Router();
 
 cardRouter.route("/:listId").post(createCardByListId);
 cardRouter.route("/:cardId").get(getCardById);
-cardRouter.route("/:cardId/edit").put(editCardById)
+cardRouter.route("/:cardId/edit/:projectId").put(editCardById)
 
 export default cardRouter;

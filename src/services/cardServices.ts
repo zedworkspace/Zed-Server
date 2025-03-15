@@ -25,7 +25,5 @@ export const getCardById = async ({ cardId }: { cardId: string }) => {
 };
 
 export const editCardById = async (cardId: string, updateData: any) => {
-  console.log(updateData,"updayte");
-  
-  return await Card.findByIdAndUpdate(cardId, updateData, { new: true });
+ return await Card.findByIdAndUpdate(cardId, updateData, { new: true });
 };
