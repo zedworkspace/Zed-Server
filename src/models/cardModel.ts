@@ -8,6 +8,7 @@ const CardSchema = new mongoose.Schema<ICard>({
   dueDate: { type: Date },
   labels: [{ type: String }],
   assignees: [{ type: Object, ref: "User" }],
+  position: { type: Number, required: true },
 });
 
 const Card = mongoose.model("Cards", CardSchema);

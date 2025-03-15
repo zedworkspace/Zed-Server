@@ -120,6 +120,10 @@ export const initializeSocket = (server: any) => {
       handleUpdatedBoard({ io, boardId });
     });
 
+    socket.on("onChangeCardPositionWithInList", (boardId) => {
+      handleUpdatedBoard({ io, boardId });
+    });
+
     socket.on("disconnect", () => {
       console.log("User disconnected:", socket.id);
     });

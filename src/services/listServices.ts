@@ -29,6 +29,7 @@ export const getListsByBoardId = async ({ boardId }: { boardId: string }) => {
   const boardObjId = new mongoose.Types.ObjectId(boardId);
   const lists = await List.aggregate([
     { $match: { boardId: boardObjId } },
+    { $sort: { position: 1 } },
     {
       $lookup: {
         from: "cards",
@@ -37,7 +38,12 @@ export const getListsByBoardId = async ({ boardId }: { boardId: string }) => {
         as: "cards",
       },
     },
-  ]).sort("position");
+    {
+      $addFields: {
+        cards: { $sortArray: { input: "$cards", sortBy: { position: 1 } } },
+      },
+    },
+  ]);
 
   return lists;
 };
@@ -49,29 +55,29 @@ type UpdateListPosition = {
 };
 
 export const updateListPositions = async (body: UpdateListPosition) => {
-  const activeList = await List.findOne({
-    boardId: body.boardId,
-    _id: body.activeListId,
-  });
-  const overList = await List.findOne({
-    boardId: body.boardId,
-    _id: body.overListId,
-  });
-  const activeListPosition = activeList?.position;
-  const overListPosition = overList?.position;
-  await List.findOneAndUpdate(
-    {
-      boardId: body.boardId,
-      _id: body.activeListId,
-    },
-    { position: overListPosition }
-  );
-  await List.findOneAndUpdate(
-    {
-      boardId: body.boardId,
-      _id: body.overListId,
-    },
-    { position: activeListPosition }
-  );
+  // const activeList = await List.findOne({
+  //   boardId: body.boardId,
+  //   _id: body.activeListId,
+  // });
+  // const overList = await List.findOne({
+  //   boardId: body.boardId,
+  //   _id: body.overListId,
+  // });
+  // const activeListPosition = activeList?.position;
+  // const overListPosition = overList?.position;
+  // await List.findOneAndUpdate(
+  //   {
+  //     boardId: body.boardId,
+  //     _id: body.activeListId,
+  //   },
+  //   { position: overListPosition }
+  // );
+  // await List.findOneAndUpdate(
+  //   {
+  //     boardId: body.boardId,
+  //     _id: body.overListId,
+  //   },
+  //   { position: activeListPosition }
+  // );
   return await List.find({ boardId: body.boardId });
 };

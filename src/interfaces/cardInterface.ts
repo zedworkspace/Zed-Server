@@ -8,4 +8,5 @@ export interface ICard {
   labels?: string[];
   dueDate?: Date;
   assignees?: Profile[];
+  position: number;
 }
