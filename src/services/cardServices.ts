@@ -17,6 +17,7 @@ export const createCardByListId = async ({ listId, body }: CreateCard) => {
     title: body.title,
     position,
   });
+  console.log("Card ", card);
   return card;
 };
 
@@ -81,12 +82,12 @@ export const updateCardPositionInDiffLists = async (
   const { fromCardId, fromListId, toCardId, toListId } = body;
 
   // update fromCardId card with position of the toCardId card and change listId with fromListId
-  const overCard = await Card.findOne({ _id: toCardId });
-  const newPosition = overCard?.position as number;
-  const activeCard = await Card.findOneAndUpdate(
-    { _id: fromCardId },
-    { position: newPosition }
-  );
-  console.log("overCard", overCard);
-  console.log("activeCard", activeCard);
+  // const overCard = await Card.findOne({ _id: toCardId });
+  // const newPosition = overCard?.position as number;
+  // const activeCard = await Card.findOneAndUpdate(
+  //   { _id: fromCardId },
+  //   { position: newPosition }
+  // );
+  // console.log("overCard", overCard);
+  // console.log("activeCard", activeCard);
 };
