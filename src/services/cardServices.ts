@@ -17,7 +17,7 @@ export const createCardByListId = async ({ listId, body }: CreateCard) => {
     title: body.title,
     position,
   });
-  console.log("Card ", card);
+
   return card;
 };
 
@@ -49,21 +49,54 @@ export const updateCardPositionInSameList = async (
   const activeCard = await Card.findOne({ _id: fromCardId });
   const overCard = await Card.findOne({ _id: toCardId });
 
-  const activeCardPosition = activeCard?.position;
-  const overCardPosition = overCard?.position;
+  const activeCardPosition = activeCard?.position as number;
+  const overCardPosition = overCard?.position as number;
 
-  await Card.findOneAndUpdate(
-    {
-      _id: fromCardId,
-    },
-    { position: overCardPosition }
-  );
-  await Card.findOneAndUpdate(
-    {
-      _id: toCardId,
-    },
-    { position: activeCardPosition }
-  );
+  console.log({ activeCard, overCard });
+  // step 1 - change active card position to overCard's position
+  // step 2 - check card position for understanding card is moved to top or bottom
+
+  if (activeCardPosition < overCardPosition) {
+    // moved to bottom
+    console.log("card moved top-bottom");
+    await Card.updateMany(
+      {
+        listId,
+        position: { $lte: overCardPosition },
+      },
+      { $inc: { position: -1 } }
+    );
+    await Card.findOneAndUpdate(
+      {
+        _id: fromCardId,
+      },
+      { position: overCardPosition }
+    );
+  } else if (activeCardPosition < overCardPosition) {
+    // moved to top
+  }
+
+  // await Card.updateMany(
+  //   {
+  //     listId,
+  //     position: { $gte: overCardPosition },
+  //   },
+  //   { $inc: { position: -1 } }
+  // );
+
+  // await Card.findOneAndUpdate(
+  //   {
+  //     _id: fromCardId,
+  //   },
+  //   { position: overCardPosition }
+  // );
+  // await Card.findOneAndUpdate(
+  //   {
+  //     _id: toCardId,
+  //   },
+  //   { position: activeCardPosition }
+  // );
+
   return await List.findOne({ _id: listId });
 };
 
