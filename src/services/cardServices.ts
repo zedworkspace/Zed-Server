@@ -1,14 +1,13 @@
-import { IUpdateCardPositionInSameListBody } from "../interfaces/cardInterface";
+import {
+  ICreateCard,
+  IUpdateCardPositionInDiffListsBody,
+  IUpdateCardPositionInSameListBody,
+} from "../interfaces/cardInterface";
 import Card from "../models/cardModel";
 import List from "../models/listModel";
 import CustomError from "../utils/CustomError";
 
-type CreateCard = {
-  listId: string;
-  body: { title: string };
-};
-
-export const createCardByListId = async ({ listId, body }: CreateCard) => {
+export const createCardByListId = async ({ listId, body }: ICreateCard) => {
   const lastCard = await Card.findOne({ listId }).sort("-position");
 
   const position = lastCard ? lastCard?.position + 1 : 1;
@@ -36,8 +35,6 @@ export const editCardById = async (cardId: string, updateData: any) => {
 
   return await Card.findByIdAndUpdate(cardId, updateData, { new: true });
 };
-
-
 
 export const updateCardPositionInSameList = async (
   body: IUpdateCardPositionInSameListBody
@@ -83,15 +80,8 @@ export const updateCardPositionInSameList = async (
   return await List.findOne({ _id: listId });
 };
 
-type UpdateCardPositionInDiffListsBody = {
-  fromListId: string;
-  toListId: string;
-  fromCardId: string;
-  toCardId: string;
-};
-
 export const updateCardPositionInDiffLists = async (
-  body: UpdateCardPositionInDiffListsBody
+  body: IUpdateCardPositionInDiffListsBody
 ) => {
   const { fromCardId, toCardId, toListId } = body;
 

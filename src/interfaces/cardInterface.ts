@@ -16,3 +16,14 @@ export interface IUpdateCardPositionInSameListBody {
   fromCardId: string;
   toCardId: string;
 }
+
+export interface IUpdateCardPositionInDiffListsBody {
+  fromListId: string;
+  toListId: string;
+  fromCardId: string;
+  toCardId: string;
+}
+export interface ICreateCard {
+  listId: string;
+  body: { title: string };
+}
