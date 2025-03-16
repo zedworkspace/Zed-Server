@@ -10,3 +10,9 @@ export interface ICard {
   assignees?: Profile[];
   position: number;
 }
+
+export interface IUpdateCardPositionInSameListBody {
+  listId: string;
+  fromCardId: string;
+  toCardId: string;
+}
