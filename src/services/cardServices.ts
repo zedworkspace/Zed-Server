@@ -27,7 +27,6 @@ export const getCardById = async ({ cardId }: { cardId: string }) => {
   if (!card)
     throw new CustomError(`Can't find card with this id ${cardId}`, 400);
 
-  // console.log("CARD", card);
   return card;
 };
 
@@ -78,16 +77,22 @@ type UpdateCardPositionInDiffListsBody = {
 export const updateCardPositionInDiffLists = async (
   body: UpdateCardPositionInDiffListsBody
 ) => {
-  console.log("body", body);
-  const { fromCardId, fromListId, toCardId, toListId } = body;
+  const { fromCardId, toCardId, toListId } = body;
 
-  // update fromCardId card with position of the toCardId card and change listId with fromListId
-  // const overCard = await Card.findOne({ _id: toCardId });
-  // const newPosition = overCard?.position as number;
-  // const activeCard = await Card.findOneAndUpdate(
-  //   { _id: fromCardId },
-  //   { position: newPosition }
-  // );
-  // console.log("overCard", overCard);
-  // console.log("activeCard", activeCard);
+  const overCard = await Card.findOne({ _id: toCardId });
+  const overCardPosition = overCard?.position;
+
+  await Card.updateMany(
+    {
+      listId: toListId,
+      position: { $gte: overCardPosition },
+    },
+    { $inc: { position: 1 } }
+  );
+
+  await Card.findOneAndUpdate(
+    { _id: fromCardId },
+    { listId: toListId, position: overCardPosition }
+  );
+  return await List.findOne({ _id: toListId });
 };
