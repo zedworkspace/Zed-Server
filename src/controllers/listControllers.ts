@@ -23,3 +23,15 @@ export const getListsByBoardId = catchAsync(async (req, res) => {
     data: lists,
   });
 });
+
+export const updateListPositions = catchAsync(async (req, res) => {
+  const body = req.body;
+  const lists = await listServices.updateListPositions(body);
+  res
+    .status(200)
+    .json({
+      status: "success",
+      message: "Successfully updated list positions",
+      data: lists,
+    });
+});
