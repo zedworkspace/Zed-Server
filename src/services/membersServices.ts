@@ -22,6 +22,8 @@ export const joinProject = async(projectId:string,userId:string) => {
 }
 
 export const getMembersByProject = async (projectId:string) => {
+  console.log("hh",projectId);
+  
     const members = await Member.find({ projectId }).populate("userId", "name profileImg");
     
     if (!members.length) {
