@@ -109,10 +109,22 @@ export const initializeSocket = (server: any) => {
     });
 
     socket.on("onCardDrop", async (fromListId, cardId, toListId, boardId) => {
+      const lastCard = await Card.findOne({ listId: toListId }).sort(
+        "-position"
+      );
+      const newPosition = lastCard && lastCard?.position + 1;
       await Card.findOneAndUpdate(
         { _id: cardId },
-        { $set: { listId: toListId } }
+        { $set: { listId: toListId, position: newPosition } }
       );
+      handleUpdatedBoard({ io, boardId });
+    });
+
+    socket.on("onChangeListPosition", (boardId) => {
+      handleUpdatedBoard({ io, boardId });
+    });
+
+    socket.on("onChangeCardPositionWithInList", (boardId) => {
       handleUpdatedBoard({ io, boardId });
     });
 

@@ -57,3 +57,22 @@ export const editCardById = catchAsync(async (req, res) => {
   });
 });
 
+export const updateCardPositionInSameList = catchAsync(async (req, res) => {
+  const body = req.body;
+  const list = await cardServices.updateCardPositionInSameList(body);
+  res.status(200).json({
+    status: "Success",
+    message: "Card position updated successfully",
+    data: list,
+  });
+});
+
+export const updateCardPositionInDiffLists = catchAsync(async (req, res) => {
+  const body = req.body;
+  const list = await cardServices.updateCardPositionInDiffLists(body);
+  res.status(200).json({
+    status: "Success",
+    message: "Card position updated successfully",
+    data: list,
+  });
+});
