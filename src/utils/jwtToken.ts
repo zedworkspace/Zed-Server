@@ -48,7 +48,7 @@ export const sendRefreshToken  = (res:Response,token:string) : void => {
     });
 };
 
-export const clearRefreshToken = (req: Request, res: Response): void => {
+export const clearRefreshToken = (res: Response): void => {
     res.clearCookie('refreshToken', {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
