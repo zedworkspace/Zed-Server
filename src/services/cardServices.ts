@@ -1,6 +1,7 @@
 import {
   ICreateCard,
   IUpdateCardPositionInDiffListsBody,
+  IUpdateCardPositionInDnd,
   IUpdateCardPositionInSameListBody,
 } from "../interfaces/cardInterface";
 import Card from "../models/cardModel";
@@ -36,6 +37,28 @@ export const editCardById = async (cardId: string, updateData: any) => {
   return await Card.findByIdAndUpdate(cardId, updateData, { new: true });
 };
 
+export const updateCardPositionInDnd = async (
+  body: IUpdateCardPositionInDnd
+) => {
+  const { boardId, cardId, fromListId, toListId } = body;
+  const lastCard = await Card.findOne({ listId: toListId }).sort("-position");
+  const newPosition = lastCard?.position ? lastCard?.position + 1 : 1;
+
+  const activeCard = await Card.findOne({ _id: cardId });
+  const activeCardPosition = activeCard?.position;
+
+  // update rest of the cards position
+  await Card.updateMany(
+    { listId: fromListId, position: { $gte: activeCardPosition } },
+    { $inc: { position: -1 } }
+  );
+  await Card.findOneAndUpdate(
+    { _id: cardId },
+    { $set: { listId: toListId, position: newPosition } }
+  );
+  return List.findOne({ _id: toListId });
+};
+
 export const updateCardPositionInSameList = async (
   body: IUpdateCardPositionInSameListBody
 ) => {
@@ -43,51 +66,63 @@ export const updateCardPositionInSameList = async (
   const activeCard = await Card.findOne({ _id: fromCardId });
   const overCard = await Card.findOne({ _id: toCardId });
 
-  const activeCardPosition = activeCard?.position as number;
-  const overCardPosition = overCard?.position as number;
+  if (!activeCard || !overCard) return;
 
-  if (activeCardPosition < overCardPosition) {
-    // moved to top-bottom
-    await Card.updateMany(
-      {
-        listId,
-        position: { $lte: overCardPosition },
-      },
-      { $inc: { position: -1 } }
-    );
-    await Card.findOneAndUpdate(
-      {
-        _id: fromCardId,
-      },
-      { position: overCardPosition }
-    );
-  } else if (activeCardPosition > overCardPosition) {
-    // moved to bottom-top
-    await Card.updateMany(
-      {
-        listId,
-        position: { $gte: overCardPosition },
-      },
-      { $inc: { position: 1 } }
-    );
-    await Card.findOneAndUpdate(
-      {
-        _id: fromCardId,
-      },
-      { position: overCardPosition }
-    );
+  const activeCardPosition = activeCard.position;
+  const overCardPosition = overCard.position;
+
+  const positionDifference = Math.abs(activeCardPosition - overCardPosition);
+
+  if (positionDifference === 1) {
+    // console.log("Swapping adjacent cards");
+    await Card.updateOne({ _id: fromCardId }, { position: overCardPosition });
+    await Card.updateOne({ _id: toCardId }, { position: activeCardPosition });
+  } else {
+    if (activeCardPosition < overCardPosition) {
+      // console.log("Moved top-bottom");
+      await Card.updateMany(
+        {
+          listId,
+          position: { $lte: overCardPosition, $gt: activeCardPosition },
+        },
+        { $inc: { position: -1 } }
+      );
+    } else {
+      // console.log("Moved bottom-top");
+      await Card.updateMany(
+        {
+          listId,
+          position: { $gte: overCardPosition, $lt: activeCardPosition },
+        },
+        { $inc: { position: 1 } }
+      );
+    }
+
+    await Card.updateOne({ _id: fromCardId }, { position: overCardPosition });
   }
+
   return await List.findOne({ _id: listId });
 };
 
 export const updateCardPositionInDiffLists = async (
   body: IUpdateCardPositionInDiffListsBody
 ) => {
-  const { fromCardId, toCardId, toListId } = body;
+  const { fromCardId, toCardId, fromListId, toListId } = body;
 
+  const activeCard = await Card.findOne({ _id: fromCardId });
   const overCard = await Card.findOne({ _id: toCardId });
-  const overCardPosition = overCard?.position;
+  const activeCardPosition = activeCard?.position;
+  const overCardPosition = overCard?.position ? overCard?.position : 1;
 
+  // decrement active list positions
+  await Card.updateMany(
+    {
+      listId: fromListId,
+      position: { $gte: activeCardPosition },
+    },
+    { $inc: { position: -1 } }
+  );
+  // update rest of the cards position in overList
   await Card.updateMany(
     {
       listId: toListId,
@@ -95,7 +130,7 @@ export const updateCardPositionInDiffLists = async (
     },
     { $inc: { position: 1 } }
   );
-
+  // update active card listid and position to over card position
   await Card.findOneAndUpdate(
     { _id: fromCardId },
     { listId: toListId, position: overCardPosition }

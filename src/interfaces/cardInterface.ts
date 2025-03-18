@@ -11,6 +11,13 @@ export interface ICard {
   position: number;
 }
 
+export interface IUpdateCardPositionInDnd {
+  fromListId: string;
+  cardId: string;
+  toListId: string;
+  boardId: string;
+}
+
 export interface IUpdateCardPositionInSameListBody {
   listId: string;
   fromCardId: string;
