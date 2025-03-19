@@ -85,8 +85,17 @@ export const acceptInvite = async ( userId: mongoose.Types.ObjectId, inviteLink:
     }
 
     const existingMember = await Member.findOne({ projectId: invite.projectId, userId });
-    if (existingMember) {
+    if (existingMember?.status === "active") {
         throw new CustomError("User is already a member of this server", 400);
+    }
+
+    if (existingMember?.status === "left") {
+        
+        existingMember.status = "active";
+        existingMember.leftAt = null;
+
+        await existingMember.save();
+        return { message: "Invite accepted successfully, user added to the project" };
     }
 
     const newMember = new Member({
@@ -125,7 +134,7 @@ export const getInviteInfo = async (userId: mongoose.Types.ObjectId, inviteLink:
         return { redirectToProject: true, projectId: project._id };
     }
 
-    const isMember = await Member.findOne({ projectId: project._id, userId });
+    const isMember = await Member.findOne({ projectId: project._id, userId, status: "active" });
 
     if (isMember) {
         return { redirectToProject: true, projectId: project._id };

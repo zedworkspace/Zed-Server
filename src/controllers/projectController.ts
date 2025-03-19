@@ -50,3 +50,15 @@ export const updateProject = catchAsync(async(req,res) => {
   const project = await projectService.updateProject(projectId,req.body,logo)
   res.status(201).json({message:"Project updated",data:project})
 })
+
+export const leaveProject = catchAsync(async (req, res) => {
+  const user = req.user as IUser;
+  const {projectId} = req.params;
+  const response = await projectService.leaveProject(user._id, projectId);
+
+  res.status(200).json({
+    status: "success",
+    message: response.message,
+    isOwner: response.isOwner
+  });
+});
