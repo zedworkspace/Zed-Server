@@ -41,3 +41,8 @@ export const getRolesWithMembersByProject = catchAsync(async (req,res) => {
   const rolesWithMembers = await roleService.getRolesWithMembersByProject(projectId)
   res.status(200).json({message:"Get the roles of each projects",data:rolesWithMembers})
 })
+
+export const deleteRoles = catchAsync (async (req,res) => {
+  const members = await roleService.deleteRoles(req.body)
+  res.status(200).json({message:"Role deleted", data:members})
+})
