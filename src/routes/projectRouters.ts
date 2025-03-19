@@ -4,10 +4,10 @@ import {
   getProject,
   getProjects,
   updateProject,
+  leaveProject,
 } from "../controllers/projectController";
 import upload from "../middlewares/imageUploadingMiddleware";
 import { userAuth } from "../middlewares/userAuth";
-import { acceptInvite, generateInviteLink, getInviteInfo, sendInviteEmail } from "../controllers/inviteControllers";
 
 const projectRouter: Router = express.Router();
 
@@ -21,6 +21,7 @@ projectRouter
 
 projectRouter.route("/:id").get(userAuth, getProject);
 projectRouter.put('/update/:projectId',upload.single('logo'),updateProject)
+projectRouter.route("/:projectId").post(userAuth, leaveProject);
 
 export default projectRouter;
 
