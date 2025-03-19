@@ -3,6 +3,7 @@ import {
   createProject,
   getProject,
   getProjects,
+  updateProject,
   leaveProject,
 } from "../controllers/projectController";
 import upload from "../middlewares/imageUploadingMiddleware";
@@ -19,6 +20,7 @@ projectRouter
   .get(userAuth, getProjects);
 
 projectRouter.route("/:id").get(userAuth, getProject);
+projectRouter.put('/update/:projectId',upload.single('logo'),updateProject)
 projectRouter.route("/:projectId").post(userAuth, leaveProject);
 
 export default projectRouter;
