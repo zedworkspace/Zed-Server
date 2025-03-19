@@ -1,6 +1,6 @@
 import catchAsync from "../utils/catchAsync";
 import * as cardServices from "../services/cardServices";
-import *as memberServices from '../services/membersServices'
+import * as memberServices from "../services/membersServices";
 
 export const createCardByListId = catchAsync(async (req, res) => {
   const { listId } = req.params;
@@ -25,26 +25,9 @@ export const getCardById = catchAsync(async (req, res) => {
 });
 
 export const editCardById = catchAsync(async (req, res) => {
-  const { cardId, projectId } = req.params; 
-  const { title, labels, description } = req.body;
+  const { cardId } = req.params;
 
- 
-  const projectMembers = await memberServices.getMembersByProject(projectId)
-
-  if (!projectMembers) {
-    return res.status(404).json({ message: "Project members not found" });
-  }
-
-
-  const updateData = {
-    title,
-    labels,
-    description,
-    assignees: projectMembers 
-  };
-
-  
-  const updatedCard = await cardServices.editCardById(cardId, updateData);
+  const updatedCard = await cardServices.editCardById(cardId, req.body);
 
   if (!updatedCard) {
     return res.status(404).json({ message: "Card not found" });
