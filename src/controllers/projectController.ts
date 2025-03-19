@@ -44,3 +44,15 @@ export const getProject = catchAsync(async (req, res) => {
     data: project,
   });
 });
+
+export const leaveProject = catchAsync(async (req, res) => {
+  const user = req.user as IUser;
+  const {projectId} = req.params;
+  const response = await projectService.leaveProject(user._id, projectId);
+
+  res.status(200).json({
+    status: "success",
+    message: response.message,
+    isOwner: response.isOwner
+  });
+});

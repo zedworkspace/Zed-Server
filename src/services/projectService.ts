@@ -58,9 +58,31 @@ export const getProject = async (projectId: string) => {
 };
 
 export const getProjects = async (userId: mongoose.Types.ObjectId) => {
-  const projects = await Member.find({ userId }).populate(
+  const projects = await Member.find({ userId, status:"active" }).populate(
     "projectId",
     "_id name logo description owner repo"
   );
   return projects;
+};
+
+export const leaveProject = async (userId: mongoose.Types.ObjectId, projectId: string) => {
+  const project = await Project.findOne({ _id: projectId });
+  if(project?.owner.toString() === userId.toString()){
+    return {
+      message: "You can't leave the project because you are the owner of this project",
+      isOwner: true
+    };
+  }
+
+  const member = await Member.findOne({ projectId, userId });
+  if (!member) throw new CustomError("Member not found", 404);
+  
+  member.status = "left";
+  member.leftAt = new Date();
+
+  await member.save();
+  return {
+    message: "User left the project successfully",
+    isOwner: false
+  };
 };
