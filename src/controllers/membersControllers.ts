@@ -7,7 +7,7 @@ export const joinProject = async (req: Request, res: Response) => {
 
 const newMember = await memberServices.joinProject(projectId,userId)
 
-  res.status(201).json({ message: "User joined server successfully", member: newMember });
+  res.status(201).json({ message: "User joined server successfully", data: newMember });
 };
 
 
@@ -15,6 +15,6 @@ export const getMembersByProject = async (req: Request, res: Response) => {
     const { projectId } = req.params
 
     const members =await memberServices.getMembersByProject(projectId)
-    res.status(200).json({ members });
+    res.status(200).json({ data:members });
   };
   

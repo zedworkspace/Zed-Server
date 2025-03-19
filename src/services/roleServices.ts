@@ -8,14 +8,14 @@ import { IMember } from "../interfaces/memberInterface";
 //createRole
 export const createRole = async (data: {
   name: string;
-  permissions: string[];
+  // permissions: string[];
   projectId: string;
 }) => {
   const roleName = await Role.findOne({ name: data.name });
   if (roleName) throw new CustomError("Role already exist", 404);
   const role = await Role.create({
     name: data.name,
-    permissions: data.permissions,
+    // permissions: data.permissions,
     projectId: data.projectId,
   });
 
@@ -26,20 +26,28 @@ export const createRole = async (data: {
 export const assignRoleToUser = async (data: {
   projectId: string;
   roleId: mongoose.Types.ObjectId;
-  userId: string;
+  userId: string[];
 }) => {
-  const member = await Member.findOne({
+  const members = await Member.find({
     projectId: data.projectId,
-    userId: data.userId,
+    userId: { $in: data.userId }, 
   });
-  if (member?.roles.includes(data.roleId)) {
-    throw new CustomError("User already has this role in the project", 400);
+
+  if (!members.length) {
+    throw new CustomError("No valid members found in the project", 404);
   }
 
-  member?.roles.push(data.roleId);
-  await member?.save();
+  const updatedMembers = [];
 
-  return member;
+  for (const member of members) {
+    if (!member.roles.includes(data.roleId)) {
+      member.roles.push(data.roleId);
+      await member.save();
+      updatedMembers.push(member);
+    }
+  }
+
+  return updatedMembers;
 };
 
 //removeUserfromRoles
@@ -65,17 +73,32 @@ export const removeUserfromRoles = async (data: {
   return member;
 };
 
-//getRolesByProject
-// export const getRolesByProject = async (projectId: string) => {
-//   const roles = await Role.find({ projectId });
-//   return roles;
-// };
-
 //getSingleRole
-export const getSingleRole = async (roleId: string) => {
+export const getSingleRole= async (roleId: string) => {
   const role = await Role.findById(roleId);
-  return role;
+  if (!role) return null; 
+
+  const members = await Member.find({ projectId: role.projectId }).populate({
+    path: "userId",
+    select: "name profileImg",
+  })as unknown as IMember[];
+
+  const membersInRole = members.filter((member) =>
+    member.roles.includes(role._id)
+  );
+
+  return {
+    roleId: role._id,
+    roleName: role.name,
+    permissions: role.permissions,
+    members: membersInRole.map((member) => ({
+      userId: member.userId._id,
+      name: member.userId.name,
+      profileImg: member.userId.profileImg,
+    })),
+  };
 };
+
 
 //updateRoles
 export const updateRole = async (data: {
@@ -83,23 +106,26 @@ export const updateRole = async (data: {
   permissions: string[];
   name: string;
 }) => {
-  const role = await Role.findByIdAndUpdate(data.roleId, {
-    name: data.name,
-    permissions: data.permissions,
-  });
+  const role = await Role.findByIdAndUpdate(
+    data.roleId,
+    {
+      name: data.name,
+      permissions: data.permissions,
+    },
+    { new: true }
+  );
   return role;
 };
 
 //getRolesWithMembersByProject
 
 export const getRolesWithMembersByProject = async (projectId: string) => {
-  const role = await Role.find({ projectId })
+  const role = await Role.find({ projectId });
 
-  const members = await Member.find({ projectId })
-  .populate({
+  const members = (await Member.find({ projectId }).populate({
     path: "userId",
-    select: "name profileImg", 
-  })as unknown as IMember[];
+    select: "name profileImg",
+  })) as unknown as IMember[];
 
   const rolesWithMembers = role.map((role) => {
     const membersInRole = members.filter((member) =>
@@ -118,4 +144,16 @@ export const getRolesWithMembersByProject = async (projectId: string) => {
     };
   });
   return rolesWithMembers;
+};
+
+export const deleteRoles = async (data:{roleId: string, projectId: string}) => {
+  await Role.findByIdAndDelete(data.roleId);
+
+  await Member.updateMany({ projectId:data.projectId }, { $pull: { roles: data.roleId } });
+
+  const members = await Member.find({ projectId:data.projectId }).populate("roles");
+
+  console.log(members);
+
+  return members;
 };

@@ -64,3 +64,31 @@ export const getProjects = async (userId: mongoose.Types.ObjectId) => {
   );
   return projects;
 };
+
+export const updateProject = async (
+  projectId: string,
+  projectData: {
+    name?: string;
+    description?: string;
+  },
+  logo?: Express.Multer.File
+) => {
+  const updateFields: any = {};
+
+  if (projectData.name) updateFields.name = projectData.name;
+  if (projectData.description) updateFields.description = projectData.description;
+  if (logo) updateFields.logo = logo.path; 
+
+  const updatedProject = await Project.findByIdAndUpdate(
+    projectId,
+    { $set: updateFields },
+    { new: true, runValidators: true }
+  );
+
+  if (!updatedProject) {
+    throw new Error("Project not found or update failed.");
+  }
+
+  return updatedProject;
+};
+
