@@ -6,7 +6,6 @@ const MemberSchema = new mongoose.Schema({
     roles: [{ type: mongoose.Schema.Types.ObjectId, ref: "Role" }],
     status: { type: String, enum: ["active", "left"], default: "active" },
     leftAt: { type: Date, default: null, required: false },
-    // channels: [{ type: mongoose.Schema.Types.ObjectId, ref: "Channel" }],
     joinedAt: { type: Date, default: Date.now },
 });
 

@@ -9,12 +9,10 @@ const boardSchema: Schema<IBoard> = new Schema(
       required: true,
     },
     name: { type: String, required: true },
-    boardMembers: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-        required: true,
-      },
+
+    allowedRoles: [
+      "everyOne",
+      { type: mongoose.Schema.Types.ObjectId, ref: "Role" },
     ],
     isDefault: { type: Boolean, default: false },
   },

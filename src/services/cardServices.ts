@@ -1,4 +1,5 @@
 import {
+  ICard,
   ICreateCard,
   IUpdateCardPositionInDiffListsBody,
   IUpdateCardPositionInDnd,
@@ -11,12 +12,16 @@ import CustomError from "../utils/CustomError";
 export const createCardByListId = async ({ listId, body }: ICreateCard) => {
   const lastCard = await Card.findOne({ listId }).sort("-position");
 
+  const currentList = await List.findOne({ _id: listId });
+  if (!currentList)
+    throw new CustomError(`Can't find list with this id ${listId}`, 400);
   const position = lastCard ? lastCard?.position + 1 : 1;
 
   const card = await Card.create({
     listId,
     title: body.title,
     position,
+    status: currentList?.name,
   });
 
   return card;
@@ -31,10 +36,32 @@ export const getCardById = async ({ cardId }: { cardId: string }) => {
   return card;
 };
 
-export const editCardById = async (cardId: string, updateData: any) => {
-  console.log(updateData, "updayte");
+export const editCardById = async (cardId: string, updatedData: ICard) => {
+  console.log("body", updatedData);
+  const {
+    listId,
+    position,
+    status,
+    title,
+    assignees,
+    description,
+    dueDate,
+    labels,
+  } = updatedData;
+  const currentCard = await Card.findOne({ _id: cardId });
+  console.log({ currentCard });
+  if (currentCard?.status !== status) {
+    // implement dnd
+    console.log("implement dnd>>>>>>>>>>>>>>>>>>>");
+  } else {
+    return await Card.findByIdAndUpdate(
+      cardId,
+      { title, description, dueDate, labels, assignees },
+      { new: true }
+    );
+  }
 
-  return await Card.findByIdAndUpdate(cardId, updateData, { new: true });
+  return currentCard;
 };
 
 export const updateCardPositionInDnd = async (
