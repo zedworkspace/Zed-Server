@@ -7,18 +7,17 @@ const channelSchema: Schema<IChannel> = new mongoose.Schema({
     ref: "Project",
     required: true,
   },
-  
-  channelMembers :[{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "ChannelMembers"
-  }],
+
+  channelMembers: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "ChannelMembers",
+    },
+  ],
   name: { type: String, required: true },
   type: { type: String, required: true }, //voice or text
   description: { type: String },
-  allowedRoles: [
-    "everyOne",
-    { type: mongoose.Schema.Types.ObjectId, ref: "Role" },
-  ],
+  allowedRoles: [{ type: mongoose.Schema.Types.ObjectId, ref: "Role" }],
   isDefault: { type: Boolean, default: false },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },

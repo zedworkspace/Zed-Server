@@ -144,7 +144,7 @@ export const getRolesWithMembersByProject = async (projectId: string) => {
     };
   });
   return rolesWithMembers;
-};
+};  
 
 export const deleteRoles = async (data:{roleId: string, projectId: string}) => {
   await Role.findByIdAndDelete(data.roleId);
