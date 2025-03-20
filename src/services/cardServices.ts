@@ -37,22 +37,31 @@ export const getCardById = async ({ cardId }: { cardId: string }) => {
 };
 
 export const editCardById = async (cardId: string, updatedData: ICard) => {
-  console.log("body", updatedData);
-  const {
-    listId,
-    position,
-    status,
-    title,
-    assignees,
-    description,
-    dueDate,
-    labels,
-  } = updatedData;
+  const { status, listId, title, assignees, description, dueDate, labels } =
+    updatedData;
   const currentCard = await Card.findOne({ _id: cardId });
-  console.log({ currentCard });
   if (currentCard?.status !== status) {
-    // implement dnd
-    console.log("implement dnd>>>>>>>>>>>>>>>>>>>");
+    await Card.updateMany(
+      { status: currentCard?.status, position: { $gt: currentCard?.position } },
+      { $inc: { position: -1 } }
+    );
+    const lastCard = await Card.findOne({ status }).sort("-position");
+
+    const newPosition = lastCard?.position ? lastCard?.position + 1 : 1;
+    return await Card.findOneAndUpdate(
+      { _id: currentCard?._id },
+      {
+        listId,
+        status,
+        position: newPosition,
+        title,
+        description,
+        dueDate,
+        labels,
+        assignees,
+      },
+      { new: true }
+    );
   } else {
     return await Card.findByIdAndUpdate(
       cardId,

@@ -67,7 +67,7 @@ export const createBoard = async ({
 
 export const getMembersByRoles = async (boardId: string) => {
   const board = await Board.findOne({ _id: boardId }).select("allowedRoles");
-  console.log(board);
+
   if (!board)
     throw new CustomError(`Can't find board with this id ${boardId}`, 400);
 
