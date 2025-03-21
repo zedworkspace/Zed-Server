@@ -23,8 +23,8 @@ export const initializeSocket = (server: any) => {
     console.log("A user connected:", socket.id);
 
     socket.on("joinRoom", (channelId, userId) => {
-      console.log("io-channelId:",channelId)
-      console.log("io-userId:",userId)
+      console.log("io-channelId:", channelId);
+      console.log("io-userId:", userId);
       socket.join(channelId);
       console.log(`User joined room: ${channelId}, ${userId}`);
     });
@@ -101,8 +101,8 @@ export const initializeSocket = (server: any) => {
       io.emit("onUpdateList", lists);
     };
 
-    socket.on("onCreateCard", async ({ data, listId, boardId }) => {
-      await createCardByListId({ body: data, listId });
+    socket.on("onCreateCard", async ({ data, listId, boardId, userId }) => {
+      await createCardByListId({ body: data, listId, userId });
       handleUpdatedBoard({ io, boardId });
     });
 
