@@ -46,6 +46,7 @@ export const createProject = async (newProjectData: {
   const newMember = new Member({
     userId: newProjectData.owner,
     projectId: project._id,
+    isOwner: true,
   });
   await newMember.save();
 
@@ -120,6 +121,24 @@ export const changeOwner = async (ownerId: mongoose.Types.ObjectId, projectId: s
   if(project?.owner.toString() !== ownerId.toString()) throw new CustomError("Your not the owner of this project", 400);
 
   project.owner = userId;
+  const userObjectId = new mongoose.Types.ObjectId(userId);
+  const ownerObjectId = new mongoose.Types.ObjectId(ownerId);
+
+  const oldOwner = await Member.findOneAndUpdate(
+    { projectId, userId: ownerObjectId, status: "active" },
+    { $set: { isOwner: false } },
+    { new: true }
+  );
+
+  console.log("old", oldOwner);
+
+  const newOwner = await Member.findOneAndUpdate(
+    { projectId, userId: userObjectId, status: "active" },
+    { $set: { isOwner: true } },
+    { new: true }
+  );
+
+  console.log("new", newOwner);
   await project.save();
   return {
     message: "Ownership changed successfully",
