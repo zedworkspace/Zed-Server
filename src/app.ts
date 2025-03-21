@@ -13,6 +13,7 @@ import listRouter from "./routes/listRouter";
 import cardRouter from "./routes/cardRouter";
 import inviteRouter from "./routes/inviteRoutes";
 import roleRouter from "./routes/roleRoutes";
+import activityRouter from "./routes/activityRoutes";
 
 const app = express();
 
@@ -36,6 +37,7 @@ app.use("/api/v1", memberRouter);
 app.use("/api/v1/boards", boardRouter);
 app.use("/api/v1/lists", listRouter);
 app.use("/api/v1/cards", cardRouter);
+app.use("/api/v1/activity", activityRouter);
 app.use("/api/v1/", roleRouter)
 
 app.use(globalErrorHandler);
