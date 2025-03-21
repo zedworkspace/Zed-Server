@@ -6,7 +6,7 @@ import { IUser } from "../interfaces/userInterface";
 export const getProjectBoards = catchAsync(async (req, res) => {
   const { projectId } = req.params;
   const user = req.user as IUser;
-  console.log("user",user)
+
   if (!user) throw new CustomError("user not found", 404);
   const boards = await boardService.getProjectBoards({
     projectId,
