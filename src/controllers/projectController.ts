@@ -62,3 +62,27 @@ export const leaveProject = catchAsync(async (req, res) => {
     isOwner: response.isOwner
   });
 });
+
+export const changeOwner = catchAsync(async (req, res) => {
+  const owner = req.user as IUser;
+  const {projectId, userId} = req.params;
+  const response = await projectService.changeOwner(owner._id, projectId, userId);
+
+  res.status(200).json({
+    status: "success",
+    message: response.message,
+    data: response.project
+  });
+});
+
+export const isOwner = catchAsync(async (req, res) => {
+  const owner = req.user as IUser;
+  const {projectId} = req.params;
+  const response = await projectService.isOwner(owner._id, projectId);
+
+  res.status(200).json({
+    status: "success",
+    message: response.message,
+    isOwner: response.isOwner
+  });
+});

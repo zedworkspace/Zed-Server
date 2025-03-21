@@ -114,3 +114,25 @@ export const updateProject = async (
   return updatedProject;
 };
 
+export const changeOwner = async (ownerId: mongoose.Types.ObjectId, projectId: string, userId: string) => {
+  const project = await Project.findOne({ _id: projectId });
+  if(!project) throw new CustomError("Project not found", 404);
+  if(project?.owner.toString() !== ownerId.toString()) throw new CustomError("Your not the owner of this project", 400);
+
+  project.owner = userId;
+  await project.save();
+  return {
+    message: "Ownership changed successfully",
+    project
+  };
+};
+
+export const isOwner = async (ownerId: mongoose.Types.ObjectId, projectId: string) => {
+  const project = await Project.findOne({ _id: projectId });
+  if(!project) throw new CustomError("Project not found", 404);
+  if(project?.owner.toString() !== ownerId.toString()) throw new CustomError("Your not the owner of this project", 400);
+  return {
+    message: "Ownership changed successfully",
+    isOwner: true
+  };
+};
