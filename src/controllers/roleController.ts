@@ -14,7 +14,9 @@ export const assignRoleToUser = catchAsync(async (req, res) => {
 
 export const removeUserfromRoles = catchAsync(async (req, res) => {
   const member = await roleService.removeUserfromRoles(req.body);
-  res.status(201).json({ message: "User removed from this Role", data: member });
+  res
+    .status(201)
+    .json({ message: "User removed from this Role", data: member });
 });
 
 // export const getRolesByProject = catchAsync(async (req, res) => {
@@ -31,18 +33,38 @@ export const getSingleRole = catchAsync(async (req, res) => {
   res.status(200).json({ message: "Get the single role", data: role });
 });
 
-export const updateRole = catchAsync(async (req,res) => {
-  const role = await roleService.updateRole(req.body)
-  res.status(201).json({message:"Role updated",data:role})
-})
+export const updateRole = catchAsync(async (req, res) => {
+  const role = await roleService.updateRole(req.body);
+  res.status(201).json({ message: "Role updated", data: role });
+});
 
-export const getRolesWithMembersByProject = catchAsync(async (req,res) => {
+export const getRolesWithMembersByProject = catchAsync(async (req, res) => {
   const { projectId } = req.params;
-  const rolesWithMembers = await roleService.getRolesWithMembersByProject(projectId)
-  res.status(200).json({message:"Get the roles of each projects",data:rolesWithMembers})
-})
+  const rolesWithMembers = await roleService.getRolesWithMembersByProject(
+    projectId
+  );
+  res.status(200).json({
+    message: "Get the roles of each projects",
+    data: rolesWithMembers,
+  });
+});
 
-export const deleteRoles = catchAsync (async (req,res) => {
-  const members = await roleService.deleteRoles(req.body)
-  res.status(200).json({message:"Role deleted", data:members})
-})
+export const deleteRoles = catchAsync(async (req, res) => {
+  const members = await roleService.deleteRoles(req.body);
+  res.status(200).json({ message: "Role deleted", data: members });
+});
+
+export const getMemberPermissions = catchAsync(async (req, res) => {
+  const { projectId } = req.params;
+  const permissions = await roleService.getMemberPermissions(
+    req.user?._id,
+    projectId
+  );
+  res
+    .status(200)
+    .json({
+      status: "success",
+      message: "permissions fetched",
+      data: permissions,
+    });
+});

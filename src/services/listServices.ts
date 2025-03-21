@@ -14,13 +14,13 @@ export const createListByBoardId = async ({
   const lastList = await List.findOne({ boardId }).sort("-position");
 
   const position = lastList ? lastList?.position + 1 : 1;
-console.log("body",body)
+
   const list = await List.create({
     boardId,
     name: body.name,
     position,
   });
-  console.log("list",list)
+
   return list;
 };
 
