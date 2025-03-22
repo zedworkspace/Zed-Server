@@ -66,20 +66,27 @@ export const createBoard = async ({
 };
 
 export const getMembersByRoles = async (boardId: string) => {
-  const board = await Board.findOne({ _id: boardId }).select("allowedRoles");
-  console.log(board);
+  const board = await Board.findOne({ _id: boardId });
+
   if (!board)
     throw new CustomError(`Can't find board with this id ${boardId}`, 400);
 
-  const allowedMembers = await Member.aggregate([
-    {
-      $match: {
+  const matchStage = board.allowedRoles.length
+    ? {
+        projectId: board.projectId,
         roles: {
           $in: board.allowedRoles.map(
             (role) => new mongoose.Types.ObjectId(role)
           ),
         },
-      },
+      }
+    : {
+        projectId: board.projectId,
+      };
+
+  const allowedMembers = await Member.aggregate([
+    {
+      $match: matchStage,
     },
     {
       $lookup: {

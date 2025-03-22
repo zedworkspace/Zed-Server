@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import {
   ICard,
   ICreateCard,
@@ -5,11 +6,16 @@ import {
   IUpdateCardPositionInDnd,
   IUpdateCardPositionInSameListBody,
 } from "../interfaces/cardInterface";
+import Activity from "../models/activityModel";
 import Card from "../models/cardModel";
 import List from "../models/listModel";
 import CustomError from "../utils/CustomError";
 
-export const createCardByListId = async ({ listId, body }: ICreateCard) => {
+export const createCardByListId = async ({
+  listId,
+  body,
+  userId,
+}: ICreateCard) => {
   const lastCard = await Card.findOne({ listId }).sort("-position");
 
   const currentList = await List.findOne({ _id: listId });
@@ -24,6 +30,17 @@ export const createCardByListId = async ({ listId, body }: ICreateCard) => {
     status: currentList?.name,
   });
 
+  await Activity.create({
+    entityId: card._id,
+    entityType: "Card",
+    action: "Added a new card",
+    newValue: body.title,
+    details: `Added card "${body.title}" to list "${currentList.name}"`,
+    boardId: currentList.boardId,
+    user: new mongoose.Types.ObjectId(userId),
+    timestamp: new Date(),
+  });
+
   return card;
 };
 
@@ -36,23 +53,49 @@ export const getCardById = async ({ cardId }: { cardId: string }) => {
   return card;
 };
 
-export const editCardById = async (cardId: string, updatedData: ICard) => {
-  console.log("body", updatedData);
-  const {
-    listId,
-    position,
-    status,
-    title,
-    assignees,
-    description,
-    dueDate,
-    labels,
-  } = updatedData;
+export const editCardById = async (
+  cardId: string,
+  updatedData: ICard,
+  userId: string
+) => {
+  const { status, listId, title, assignees, description, dueDate, labels } =
+    updatedData;
   const currentCard = await Card.findOne({ _id: cardId });
-  console.log({ currentCard });
   if (currentCard?.status !== status) {
-    // implement dnd
-    console.log("implement dnd>>>>>>>>>>>>>>>>>>>");
+    await Card.updateMany(
+      { status: currentCard?.status, position: { $gt: currentCard?.position } },
+      { $inc: { position: -1 } }
+    );
+    const lastCard = await Card.findOne({ status }).sort("-position");
+
+    const newPosition = lastCard?.position ? lastCard?.position + 1 : 1;
+    const updatedCard = await Card.findOneAndUpdate(
+      { _id: currentCard?._id },
+      {
+        listId,
+        status,
+        position: newPosition,
+        title,
+        description,
+        dueDate,
+        labels,
+        assignees,
+      },
+      { new: true }
+    );
+
+    await Activity.create({
+      entityId: cardId,
+      entityType: "Card",
+      action: "Moved",
+      newValue: status,
+      oldValue: currentCard?.status,
+      details: `Moved this card from "${currentCard?.status}" to "${status}"`,
+      user: new mongoose.Types.ObjectId(userId),
+      timestamp: new Date(),
+    });
+
+    return updatedCard;
   } else {
     return await Card.findByIdAndUpdate(
       cardId,
@@ -65,7 +108,8 @@ export const editCardById = async (cardId: string, updatedData: ICard) => {
 };
 
 export const updateCardPositionInDnd = async (
-  body: IUpdateCardPositionInDnd
+  body: IUpdateCardPositionInDnd,
+  userId: string
 ) => {
   const { boardId, cardId, fromListId, toListId } = body;
   const lastCard = await Card.findOne({ listId: toListId }).sort("-position");
@@ -83,7 +127,22 @@ export const updateCardPositionInDnd = async (
     { _id: cardId },
     { $set: { listId: toListId, position: newPosition } }
   );
-  return List.findOne({ _id: toListId });
+
+  const toList = await List.findOne({ _id: toListId });
+  const fromList = await List.findOne({ _id: fromListId });
+  await Activity.create({
+    entityId: cardId,
+    entityType: "Card",
+    action: "Moved",
+    newValue: toList?.name,
+    oldValue: activeCard?.title,
+    details: `Moved this card from "${fromList?.name}" to "${toList?.name}"`,
+    boardId,
+    user: new mongoose.Types.ObjectId(userId),
+    timestamp: new Date(),
+  });
+
+  return toList;
 };
 
 export const updateCardPositionInSameList = async (

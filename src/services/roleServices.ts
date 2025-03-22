@@ -4,6 +4,7 @@ import Role from "../models/roleModel";
 import CustomError from "../utils/CustomError";
 import { IUser } from "../interfaces/userInterface";
 import { IMember } from "../interfaces/memberInterface";
+import Project from "../models/projectModel";
 
 //createRole
 export const createRole = async (data: {
@@ -11,7 +12,10 @@ export const createRole = async (data: {
   // permissions: string[];
   projectId: string;
 }) => {
-  const roleName = await Role.findOne({ name: data.name });
+  const roleName = await Role.findOne({
+    name: data.name,
+    projectId: data.projectId,
+  });
   if (roleName) throw new CustomError("Role already exist", 404);
   const role = await Role.create({
     name: data.name,
@@ -30,7 +34,7 @@ export const assignRoleToUser = async (data: {
 }) => {
   const members = await Member.find({
     projectId: data.projectId,
-    userId: { $in: data.userId }, 
+    userId: { $in: data.userId },
   });
 
   if (!members.length) {
@@ -74,14 +78,14 @@ export const removeUserfromRoles = async (data: {
 };
 
 //getSingleRole
-export const getSingleRole= async (roleId: string) => {
+export const getSingleRole = async (roleId: string) => {
   const role = await Role.findById(roleId);
-  if (!role) return null; 
+  if (!role) return null;
 
-  const members = await Member.find({ projectId: role.projectId }).populate({
+  const members = (await Member.find({ projectId: role.projectId }).populate({
     path: "userId",
     select: "name profileImg",
-  })as unknown as IMember[];
+  })) as unknown as IMember[];
 
   const membersInRole = members.filter((member) =>
     member.roles.includes(role._id)
@@ -98,7 +102,6 @@ export const getSingleRole= async (roleId: string) => {
     })),
   };
 };
-
 
 //updateRoles
 export const updateRole = async (data: {
@@ -144,16 +147,54 @@ export const getRolesWithMembersByProject = async (projectId: string) => {
     };
   });
   return rolesWithMembers;
-};  
+};
 
-export const deleteRoles = async (data:{roleId: string, projectId: string}) => {
+export const deleteRoles = async (data: {
+  roleId: string;
+  projectId: string;
+}) => {
   await Role.findByIdAndDelete(data.roleId);
 
-  await Member.updateMany({ projectId:data.projectId }, { $pull: { roles: data.roleId } });
+  await Member.updateMany(
+    { projectId: data.projectId },
+    { $pull: { roles: data.roleId } }
+  );
 
-  const members = await Member.find({ projectId:data.projectId }).populate("roles");
+  const members = await Member.find({ projectId: data.projectId }).populate(
+    "roles"
+  );
 
   console.log(members);
 
   return members;
+};
+
+export const getMemberPermissions = async (
+  userId: mongoose.Types.ObjectId,
+  projectId: string
+) => {
+  const project = await Project.findOne({ _id: projectId }).select("owner");
+
+  if (project?.owner.toString() === userId.toString()) {
+    return {
+      isOwner: true,
+    };
+  }
+  const member = await Member.findOne({
+    userId,
+    status: "active",
+    projectId,
+  }).select("roles");
+  if (!member) throw new CustomError("Project Member not found", 404);
+  const memberRoles = await Role.aggregate([
+    { $match: { _id: { $in: member.roles } } },
+  ]);
+  const permissions = [
+    ...new Set(memberRoles.flatMap((role) => role.permissions)),
+  ];
+  console.log("permissions", permissions);
+  return {
+    isOwner: false,
+    permissions,
+  };
 };

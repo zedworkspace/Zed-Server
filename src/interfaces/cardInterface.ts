@@ -9,7 +9,7 @@ export interface ICard {
   dueDate?: Date;
   assignees?: Profile[];
   position: number;
-  status:string
+  status: string;
 }
 
 export interface IUpdateCardPositionInDnd {
@@ -34,4 +34,5 @@ export interface IUpdateCardPositionInDiffListsBody {
 export interface ICreateCard {
   listId: string;
   body: { title: string };
+  userId: string;
 }

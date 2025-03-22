@@ -20,6 +20,7 @@ export const createListByBoardId = async ({
     name: body.name,
     position,
   });
+
   return list;
 };
 
