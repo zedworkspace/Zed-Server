@@ -94,13 +94,15 @@ export const updateProject = async (
     name?: string;
     description?: string;
   },
-  logo?: Express.Multer.File
+  logo?: Express.Multer.File,
+  banner?:Express.Multer.File
 ) => {
   const updateFields: any = {};
 
   if (projectData.name) updateFields.name = projectData.name;
   if (projectData.description) updateFields.description = projectData.description;
   if (logo) updateFields.logo = logo.path; 
+  if (banner) updateFields.banner = banner.path
 
   const updatedProject = await Project.findByIdAndUpdate(
     projectId,
