@@ -27,11 +27,18 @@ export const getListsByBoardId = catchAsync(async (req, res) => {
 export const updateListPositions = catchAsync(async (req, res) => {
   const body = req.body;
   const lists = await listServices.updateListPositions(body);
-  res
-    .status(200)
-    .json({
-      status: "success",
-      message: "Successfully updated list positions",
-      data: lists,
-    });
+  res.status(200).json({
+    status: "success",
+    message: "Successfully updated list positions",
+    data: lists,
+  });
+});
+
+export const softDeleteById = catchAsync(async (req, res) => {
+  const { listId } = req.params;
+  await listServices.softDeleteById(listId);
+  res.status(200).json({
+    status: "success",
+    message: "List deleted successfully",
+  });
 });

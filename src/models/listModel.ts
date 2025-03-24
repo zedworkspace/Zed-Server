@@ -11,7 +11,8 @@ const listSchema = new mongoose.Schema<IList>({
     required: true,
   },
   position: { type: Number, required: true },
-  color:{type:String}
+  color: { type: String },
+  isDeleted: { type: Boolean, default: false },
 });
 
 const List = mongoose.model("Lists", listSchema);
