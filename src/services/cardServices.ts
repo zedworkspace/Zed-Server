@@ -223,3 +223,7 @@ export const updateCardPositionInDiffLists = async (
   );
   return await List.findOne({ _id: toListId });
 };
+
+export const deleteCardById = async (id: string) => {
+  await Card.findOneAndUpdate({ _id: id }, { isDeleted: true });
+};

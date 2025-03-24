@@ -10,6 +10,7 @@ export interface ICard {
   assignees?: Profile[];
   position: number;
   status: string;
+  isDeleted:boolean
 }
 
 export interface IUpdateCardPositionInDnd {

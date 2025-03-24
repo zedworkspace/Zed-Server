@@ -36,16 +36,20 @@ export const getListsByBoardId = async ({ boardId }: { boardId: string }) => {
         from: "cards",
         localField: "_id",
         foreignField: "listId",
+        pipeline: [
+          { $match: { isDeleted: false } },
+          { $sort: { position: 1 } },
+        ],
         as: "cards",
       },
     },
-    {
-      $addFields: {
-        cards: { $sortArray: { input: "$cards", sortBy: { position: 1 } } },
-      },
-    },
+    // {
+    //   $addFields: {
+    //     cards: { $sortArray: { input: "$cards", sortBy: { position: 1 } } },
+    //   },
+    // },
   ]);
-
+  console.log("lists", lists);
   return lists;
 };
 
@@ -64,21 +68,52 @@ export const updateListPositions = async (body: UpdateListPosition) => {
     boardId: body.boardId,
     _id: body.overListId,
   });
-  const activeListPosition = activeList?.position;
-  const overListPosition = overList?.position;
-  await List.findOneAndUpdate(
-    {
-      boardId: body.boardId,
-      _id: body.activeListId,
-    },
-    { position: overListPosition }
-  );
-  await List.findOneAndUpdate(
-    {
-      boardId: body.boardId,
-      _id: body.overListId,
-    },
-    { position: activeListPosition }
-  );
+
+  const activeListPosition = activeList?.position as number;
+  const overListPosition = overList?.position as number;
+  const positionDiff = Math.abs(activeListPosition - overListPosition);
+
+  if (positionDiff === 1) {
+    await List.findOneAndUpdate(
+      {
+        boardId: body.boardId,
+        _id: body.activeListId,
+      },
+      { position: overListPosition }
+    );
+    await List.findOneAndUpdate(
+      {
+        boardId: body.boardId,
+        _id: body.overListId,
+      },
+      { position: activeListPosition }
+    );
+  } else if (activeListPosition < overListPosition) {
+    await List.updateMany(
+      {
+        boardId: new mongoose.Types.ObjectId(body.boardId),
+        position: { $gt: activeListPosition, $lte: overListPosition },
+      },
+      { $inc: { position: -1 } }
+    );
+    await List.findOneAndUpdate(
+      { _id: body.activeListId },
+      { position: overListPosition }
+    );
+  } else if (activeListPosition > overListPosition) {
+    await List.updateMany(
+      {
+        boardId: new mongoose.Types.ObjectId(body.boardId),
+        position: { $gte: overListPosition, $lt: activeListPosition },
+      },
+      { $inc: { position: 1 } }
+    );
+
+    await List.findOneAndUpdate(
+      { _id: body.activeListId },
+      { position: overListPosition }
+    );
+  } else throw new CustomError("something wrong happened", 400);
+
   return await List.find({ boardId: body.boardId });
 };
