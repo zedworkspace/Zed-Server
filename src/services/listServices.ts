@@ -15,10 +15,15 @@ export const createListByBoardId = async ({
 
   const position = lastList ? lastList?.position + 1 : 1;
 
+  const colors = ["#f87171", "#60a5fa", "#4ade80",  "#facc15", "#c084fc", "#fb7185"];
+
+  const randomColor = colors[Math.floor(Math.random() * colors.length)];
+
   const list = await List.create({
     boardId,
     name: body.name,
     position,
+    color: randomColor,
   });
 
   return list;
@@ -29,7 +34,7 @@ export const getListsByBoardId = async ({ boardId }: { boardId: string }) => {
 
   const boardObjId = new mongoose.Types.ObjectId(boardId);
   const lists = await List.aggregate([
-    { $match: { boardId: boardObjId } },
+    { $match: { boardId: boardObjId, isDeleted: false } },
     { $sort: { position: 1 } },
     {
       $lookup: {
@@ -116,4 +121,8 @@ export const updateListPositions = async (body: UpdateListPosition) => {
   } else throw new CustomError("something wrong happened", 400);
 
   return await List.find({ boardId: body.boardId });
+};
+
+export const softDeleteById = async (_id: string) => {
+  await List.findOneAndUpdate({ _id }, { isDeleted: true });
 };
