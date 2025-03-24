@@ -15,18 +15,7 @@ export const createListByBoardId = async ({
 
   const position = lastList ? lastList?.position + 1 : 1;
 
-  const colors = [
-    "red",
-    "blue",
-    "green",
-    "yellow",
-    "purple",
-    "orange",
-    "pink",
-    "emerald",
-    "violet",
-    "rose",
-  ];
+  const colors = ["red", "blue", "green", "yellow", "purple", "rose"];
 
   const randomColor = colors[Math.floor(Math.random() * colors.length)];
 
