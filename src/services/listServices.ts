@@ -36,16 +36,20 @@ export const getListsByBoardId = async ({ boardId }: { boardId: string }) => {
         from: "cards",
         localField: "_id",
         foreignField: "listId",
+        pipeline: [
+          { $match: { isDeleted: false } },
+          { $sort: { position: 1 } },
+        ],
         as: "cards",
       },
     },
-    {
-      $addFields: {
-        cards: { $sortArray: { input: "$cards", sortBy: { position: 1 } } },
-      },
-    },
+    // {
+    //   $addFields: {
+    //     cards: { $sortArray: { input: "$cards", sortBy: { position: 1 } } },
+    //   },
+    // },
   ]);
-
+  console.log("lists", lists);
   return lists;
 };
 
