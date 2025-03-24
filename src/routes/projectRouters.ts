@@ -20,7 +20,7 @@ projectRouter
   .get(userAuth, getProjects);
 
 projectRouter.route("/:id").get(userAuth, getProject);
-projectRouter.put('/update/:projectId',upload.single('logo'),updateProject)
+projectRouter.put('/update/:projectId',upload.fields([{name:"logo", maxCount:1},{name:"banner", maxCount:1}]),updateProject)
 projectRouter.route("/:projectId").post(userAuth, leaveProject);
 
 export default projectRouter;
