@@ -11,6 +11,7 @@ const listSchema = new mongoose.Schema<IList>({
     required: true,
   },
   position: { type: Number, required: true },
+  color:{type:String}
 });
 
 const List = mongoose.model("Lists", listSchema);
