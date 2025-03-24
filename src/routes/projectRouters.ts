@@ -5,6 +5,8 @@ import {
   getProjects,
   updateProject,
   leaveProject,
+  changeOwner,
+  isOwner,
 } from "../controllers/projectController";
 import upload from "../middlewares/imageUploadingMiddleware";
 import { userAuth } from "../middlewares/userAuth";
@@ -22,6 +24,8 @@ projectRouter
 projectRouter.route("/:id").get(userAuth, getProject);
 projectRouter.put('/update/:projectId',upload.single('logo'),updateProject)
 projectRouter.route("/:projectId").post(userAuth, leaveProject);
+projectRouter.route("/change-owner/:projectId/:userId").post(userAuth, changeOwner);
+projectRouter.route("/check-ownership/:projectId/").get(userAuth, isOwner);
 
 export default projectRouter;
 
