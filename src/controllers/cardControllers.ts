@@ -5,7 +5,12 @@ import * as memberServices from "../services/membersServices";
 export const createCardByListId = catchAsync(async (req, res) => {
   const { listId } = req.params;
   const body = req.body;
-  const card = await cardServices.createCardByListId({ listId, body });
+  const user = req.user;
+  const card = await cardServices.createCardByListId({
+    listId,
+    body,
+    userId: user._id,
+  });
 
   res.status(200).json({
     status: "success",
@@ -26,8 +31,12 @@ export const getCardById = catchAsync(async (req, res) => {
 
 export const editCardById = catchAsync(async (req, res) => {
   const { cardId } = req.params;
-
-  const updatedCard = await cardServices.editCardById(cardId, req.body);
+  const user = req.user;
+  const updatedCard = await cardServices.editCardById(
+    cardId,
+    req.body,
+    user._id
+  );
 
   if (!updatedCard) {
     return res.status(404).json({ message: "Card not found" });
@@ -42,7 +51,8 @@ export const editCardById = catchAsync(async (req, res) => {
 
 export const updateCardPositionInDnd = catchAsync(async (req, res) => {
   const body = req.body;
-  const list = await cardServices.updateCardPositionInDnd(body);
+  const user = req.user;
+  const list = await cardServices.updateCardPositionInDnd(body, user._id);
   res.status(200).json({
     status: "Success",
     message: "Card position updated successfully",
@@ -66,5 +76,14 @@ export const updateCardPositionInDiffLists = catchAsync(async (req, res) => {
     status: "Success",
     message: "Card position updated successfully",
     data: list,
+  });
+});
+
+export const deleteCardById = catchAsync(async (req, res) => {
+  const { cardId } = req.params;
+  await cardServices.deleteCardById(cardId);
+  res.status(200).json({
+    status: "Success",
+    message: "Card deleted successfully",
   });
 });
