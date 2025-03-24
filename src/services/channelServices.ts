@@ -3,6 +3,7 @@ import { IChannel } from "../interfaces/channelInterface";
 import Channel from "../models/channelModel";
 import CustomError from "../utils/CustomError";
 import Member from "../models/memberModel";
+import Project from "../models/projectModel";
 
 export const createChannel = async (channelData: IChannel) => {
   const { name, type, allowedRoles, description, projectId } = channelData;
@@ -20,27 +21,38 @@ export const getChannelByProjectId = async (
   projectId: string,
   userId: mongoose.Types.ObjectId
 ) => {
+  
   const member = await Member.findOne({
     userId,
     projectId,
     status: "active",
-  });
-
+  }).populate("roles");
+  
   if (!member) {
     return { textChannels: [], voiceChannels: [] };
   }
+  
+  const isOwner = member.isOwner;
+  const memberPermissions = member
+  ? member.roles.flatMap((role: any) => role.permissions)
+  : [];
+  const isAdmin = memberPermissions.includes("ADMINISTRATION");
 
-  const memberRoles = member.roles;
 
+  const matchCondition =
+    isOwner || isAdmin
+      ? {}
+      : {
+          $or: [{ allowedRoles: { $size: 0 } }, { allowedRoles: { $in: member.roles.map((role: any) => role._id) } }],
+        };
+
+  
   const textChannels = await Channel.aggregate([
     {
       $match: {
         projectId: new mongoose.Types.ObjectId(projectId),
         type: "text",
-        $or: [
-          { allowedRoles: { $size: 0 } },
-          { allowedRoles: { $in: memberRoles } },
-        ],
+        ...matchCondition,
       },
     },
   ]);
@@ -50,10 +62,7 @@ export const getChannelByProjectId = async (
       $match: {
         projectId: new mongoose.Types.ObjectId(projectId),
         type: "voice",
-        $or: [
-          { allowedRoles: { $size: 0 } },
-          { allowedRoles: { $in: memberRoles } },
-        ],
+        ...matchCondition,
       },
     },
   ]);

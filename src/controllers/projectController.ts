@@ -46,8 +46,10 @@ export const getProject = catchAsync(async (req, res) => {
 
 export const updateProject = catchAsync(async(req,res) => {
   const {projectId} = req.params
-  const logo = req.file
-  const project = await projectService.updateProject(projectId,req.body,logo)
+  const logo = req.files["logo"] ? req.files["logo"][0] : null;
+  const banner = req.files["banner"] ? req.files["banner"][0] : null;
+  
+  const project = await projectService.updateProject(projectId,req.body,logo,banner)
   res.status(201).json({message:"Project updated",data:project})
 })
 
@@ -55,6 +57,30 @@ export const leaveProject = catchAsync(async (req, res) => {
   const user = req.user as IUser;
   const {projectId} = req.params;
   const response = await projectService.leaveProject(user._id, projectId);
+
+  res.status(200).json({
+    status: "success",
+    message: response.message,
+    isOwner: response.isOwner
+  });
+});
+
+export const changeOwner = catchAsync(async (req, res) => {
+  const owner = req.user as IUser;
+  const {projectId, userId} = req.params;
+  const response = await projectService.changeOwner(owner._id, projectId, userId);
+
+  res.status(200).json({
+    status: "success",
+    message: response.message,
+    data: response.project
+  });
+});
+
+export const isOwner = catchAsync(async (req, res) => {
+  const owner = req.user as IUser;
+  const {projectId} = req.params;
+  const response = await projectService.isOwner(owner._id, projectId);
 
   res.status(200).json({
     status: "success",

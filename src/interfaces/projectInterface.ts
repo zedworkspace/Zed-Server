@@ -3,6 +3,7 @@ export interface IProject{
   name: string;
   description?: string;
   logo: string;
+  banner:string
   owner: mongoose.Types.ObjectId | string;
   repo?: string[];
 }
