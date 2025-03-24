@@ -21,10 +21,8 @@ export const joinProject = async(projectId:string,userId:string) => {
     return newMember
 }
 
-export const getMembersByProject = async (projectId:string) => {
-  console.log("hh",projectId);
-  
-    const members = await Member.find({ projectId }).populate("userId", "name profileImg");
+export const getMembersByProject = async (projectId:string) => {  
+    const members = await Member.find({ projectId, status: "active"}).populate("userId", "name profileImg");
     
     if (!members.length) {
       throw new CustomError("No members found", 404)

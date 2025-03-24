@@ -78,3 +78,12 @@ export const updateCardPositionInDiffLists = catchAsync(async (req, res) => {
     data: list,
   });
 });
+
+export const deleteCardById = catchAsync(async (req, res) => {
+  const { cardId } = req.params;
+  await cardServices.deleteCardById(cardId);
+  res.status(200).json({
+    status: "Success",
+    message: "Card deleted successfully",
+  });
+});

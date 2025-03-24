@@ -10,6 +10,7 @@ const CardSchema = new mongoose.Schema<ICard>({
   assignees: [{ type: Object, ref: "User" }],
   position: { type: Number, required: true },
   status: { type: String, required: true },
+  isDeleted: { type: Boolean, default: false },
 });
 
 const Card = mongoose.model("Cards", CardSchema);

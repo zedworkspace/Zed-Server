@@ -192,7 +192,6 @@ export const getMemberPermissions = async (
   const permissions = [
     ...new Set(memberRoles.flatMap((role) => role.permissions)),
   ];
-  console.log("permissions", permissions);
   return {
     isOwner: false,
     permissions,
